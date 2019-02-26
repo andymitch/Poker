@@ -4,6 +4,48 @@
 using namespace std;
 
 
+//PLAYER STRUCT FUNCTIONS:
+/****************************************************************************/
+Player::Player(string n){
+  this->name = n;
+  this->next = nullptr;
+}
+
+Player::Player(int i){
+  if(i == 2) this->name = "Alex";
+  else if(i == 3) this->name = "Brian";
+  else if(i == 4) this->name = "Carl";
+  else if(i == 5) this->name = "Derrek";
+  else this->name = "Mike";
+  this->next = nullptr;
+}
+
+Player::table(int i){
+  for(int i = 2; i <= n; i++){
+    Player* newPlayer = new Player(i)
+    newPlayer->next = player;
+    player = newPlayer;
+  }
+}
+
+//POKER CLASS (DE/CON)STRUCTORS & FUNCTIONS:
+/****************************************************************************/
+Poker(int i){
+  if(i == 2) player->name = "Alex";
+  else if(i == 3) player->name = "Brian";
+  else if(i == 4) player->name = "Carl";
+  else if(i == 5) player->name = "Derrek";
+  else player->name = "Mike";
+  player->next = nullptr;
+}
+
+Poker(string n){
+  player->name = n;
+  player->next = nullptr;
+}
+
+
+
 int rules(Player* p){
   vector<Card> hand = p->hand;
   /*
@@ -33,12 +75,6 @@ vector<cards> Poker::shuffle(){ //maybe change container to stack
     }
   }
   random_shuffle(deck.begin(), deck.end());
-}
-
-Poker::table(int n){
-  for(int i = 2; i <= n; i++){
-    Player* newBot = new Player(i) // thats not right; it needs to be Poker(i) but remain Player*
-  }
 }
 
 void RPNCalculator::push(float num){

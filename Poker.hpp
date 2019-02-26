@@ -1,23 +1,21 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include <numeric>//iota
+#include <stack>
 #include <algorithm>//random_shuffle
 using namespace std;
 
 
-enum suits{club, diamond, heart, spade};
-enum ranks{2,3,4,5,6,7,8,9,10,J,Q,K,A};
+enum suits{club, diamond, heart, spade}; //0-3 (4)
+enum ranks{2,3,4,5,6,7,8,9,10,J,Q,K,A}; //0-12 (13)
 
-class Card{
+struct Card{
   suits suit;
   ranks rank;
-public:
   Card(suits s, ranks r){
     suit = s;
     rank = r;
   }
-  ~Card();
 };
 
 struct Player{
@@ -25,36 +23,22 @@ struct Player{
   Player* next;
   vector <Card> hand;
   float money;
+  Poker(string n); //human constructor
+  Player(int); //bot constructor
+  ~Player();
+  void table(int);
 };
 
 class Poker{
-  Player* dealer;
+  vector<Card> dealer;
   Player* player;
-  vector<Card> deck;
+  stack<Card> deck;
   float pot;
 public:
-  Poker(int i){
-    if(i == 2) player->name = "Alex";
-    else if(i == 3) player->name = "Brian";
-    else if(i == 4) player->name = "Carl";
-    else if(i == 5) player->name = "Derrek";
-    else player->name = "Mike";
-    player->next = nullptr;
-  }
-  Poker(string n){
-    player->name = n;
-    player->next = nullptr;
-  }
-  ~Poker(){
-    while(player != NULL){
-      Player* temp = player;
-      player = temp->next;
-      delete temp;
-    }
-  }
-  void table(int);
+  Poker();
+  ~Poker();
   void deal();
-  vector<card> shuffle();
+  stack<Card> shuffle();
   int rules(Player);
 };
 

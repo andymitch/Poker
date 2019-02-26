@@ -26,7 +26,7 @@ int main(int argc, char* argv[]){
       int x;
       while(true){
         cin << x;
-        switch(x){
+        switch(x){ //syntax: play.function(play.player);
           case 1:
           case 2:
           case 3:
