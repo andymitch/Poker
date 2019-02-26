@@ -5,7 +5,7 @@ using namespace std;
 
 
 int rules(Player* p){
-  vector<cards> hand = p->hand;
+  vector<Card> hand = p->hand;
   /*
   10 royal flush: A,K,Q,J,10 of the same suit
   9 straight flush: 5 cards in sequence of the same suit
@@ -24,9 +24,14 @@ int rules(Player* p){
   }
 }
 
-vector<cards> Poker::shuffle(){
-  vector<cards> deck(52);
-  iota(begin(deck), end(deck), 0);
+vector<cards> Poker::shuffle(){ //maybe change container to stack
+  vector<Card> deck;
+  for(suits i = 0; i < 4; i++){
+    for(ranks j = 0; j < 13; j++){
+      Card temp = new Card(i,j);
+      deck.push_back(temp);
+    }
+  }
   random_shuffle(deck.begin(), deck.end());
 }
 
