@@ -9,22 +9,28 @@ using namespace std;
 enum suits{club, diamond, heart, spade};
 enum ranks{2,3,4,5,6,7,8,9,10,J,Q,K,A};
 
-struct Cards{
+class Card{
   suits suit;
   ranks rank;
+public:
+  Card(suits s, ranks r){
+    suit = s;
+    rank = r;
+  }
+  ~Card();
 };
 
 struct Player{
   string name;
   Player* next;
-  vector <Cards> hand;
+  vector <Card> hand;
   float money;
 };
 
 class Poker{
   Player* dealer;
   Player* player;
-  vector<Cards> deck;
+  vector<Card> deck;
   float pot;
 public:
   Poker(int i){
@@ -48,7 +54,7 @@ public:
   }
   void table(int);
   void deal();
-  vector<cards> shuffle();
+  vector<card> shuffle();
   int rules(Player);
 };
 
