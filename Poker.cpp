@@ -7,17 +7,19 @@ using namespace std;
 //PLAYER STRUCT FUNCTIONS:
 /****************************************************************************/
 Player::Player(string n){
-  this->name = n;
-  this->next = nullptr;
+  name = n;
+  next = nullptr;
+  chance = 0;
 }
 
 Player::Player(int i){
-  if(i == 2) this->name = "Alex";
-  else if(i == 3) this->name = "Brian";
-  else if(i == 4) this->name = "Carl";
-  else if(i == 5) this->name = "Derrek";
-  else this->name = "Mike";
-  this->next = nullptr;
+  if(i == 2) name = "Alex";
+  else if(i == 3) name = "Brian";
+  else if(i == 4) name = "Carl";
+  else if(i == 5) name = "Derrek";
+  else name = "Mike";
+  next = nullptr;
+  chance = 0;
 }
 
 Player::table(int i){
@@ -58,8 +60,6 @@ void Poker::deal(){
     turn = turn->next;
   }
 }
-
-
 
 void RPNCalculator::push(float num){
   Operand* newOp = new Operand;
