@@ -18,11 +18,27 @@ struct Card{
   }
 };
 
+struct Table{
+  vector<Card> dealer; //push cards from deck to dealer
+  stack<Card> deck;
+  float bid;
+  float pot;
+};
+
+class Player{
+  string name;
+  Player* next;
+
+}poker;
+
+/******************************************************/
+
 struct Player{
   string name;
   Player* next;
   vector <Card> hand; //push cards from deck to hand (vector in order to reference cards)
   float money;
+  int chance;
   Player(string n); //human constructor
   Player(int); //bot constructor
   ~Player();
@@ -32,12 +48,18 @@ struct Player{
 class Poker{
   vector<Card> dealer; //push cards from deck to dealer (vector in order to reference cards)
   stack<Card> deck;
+  float bid;
   float pot;
   Player* player; //reference to player list
 public:
   Poker();
   ~Poker();
-  void deal(); //push ONE card from deck to players' hands
+  void deal(); //push ONE card from deck to players' hands, burns one, push one to dealer.
   stack<Card> shuffle(); //generate new stack of shuffled cards
-  int rules(Player);
+  int rules(hand, deck);
+  void fold(); //quits hand, doesn't have to bet()
+  void raise(); //raise bid and move on, still have to bet()
+  void check(); //move on without raising bit, still have to bet()
+  void bet(); //put bid amount into pot from player money
+  void call(); //calls highHand() for every player: turn->chance = highHand();
 };
