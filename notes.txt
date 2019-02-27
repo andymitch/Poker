@@ -1,0 +1,25 @@
+129-103 royal flush: A,K,Q,J,10 of the same suit
+116-128 straight flush: 5 cards in sequence of the same suit
+103-115 four of a kind: 4 cards of the same rank
+78-102 full house: 3 cards of the same rank with 2 cards of the same rank
+65-77 flush: 5 cards in the same suit
+52-64 straight: 5 cards in sequence
+39 +  three of a kind: 3 cards of the same rank
+26 +  two pair: 2 pairs of 2 cards in the same rank
+13 +  pair: 2 cards in the same rank
+0 + (0-12)  + (.25, .5, .75, 1) high card: highest card in hand (cascading if statements so that high card is last resort)
+*/
+//precedence: hand->rank->suit
+
+0 + (0-12)/13 + (1-4)/52 : high card
+1 + (0-12)/13 + (1-4)/52 : pair
+2 + (0-12)/13 + (1-4)/52 : two pair
+3 + (0-12)/13 + (1-4)/52 : three of a kind
+4 + (0-12)/13 + (1-4)/52 : straight
+5 + (0-12)/13 + (1-4)/52 : flush
+6 + (0-12)/13 + (1-4)/52 : full house
+7 + (0-12)/13 + (1-4)/52 : four of a kind
+8 + (0-12)/13 + (1-4)/52 : straight flush
+9 + (0-12)/13 + (1-4)/52 : royal flush
+
+//fix: math only works for pairs and 'of a kinds
