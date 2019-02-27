@@ -13,80 +13,87 @@ bool Poker::highest(Card a, Card b){
   }
 }
 
-bool Poker::royalFlush(vector<Card> a){
+int highRank(vector<Card> a){
+  Ranks rank = 0;
+  for (vector<int>::iterator it = a.begin() ; it != a.end(); ++it)
+    if(*it > rank) rank = *it;
+  return rank*10;
+}
+
+int highSuit(vector<Card> a){
+  Suits suit = 0;
+  for (vector<int>::iterator it = a.begin() ; it != a.end(); ++it)
+    if(*it > suit) suit = *it;
+  return suit;
+}
+
+//royal flush: A,K,Q,J,10 of the same suit
+bool royalFlush(vector<Card> &a){
+  //if royal flush, reduce hand to the royal flush. same with other functions.
+}
+
+//straight flush: 5 cards in sequence of the same suit
+bool straightFlush(vector<Card> &a){
 
 }
 
-bool Poker::straightFlush(vector<Card> a){
+//four of a kind: 4 cards of the same rank
+bool fourKind(vector<Card> &a){
 
 }
 
-bool fourKind(vector<Card> a){
+//full house: 3 cards of the same rank with 2 cards of the same rank
+bool fullHouse(vector<Card> &a){
 
 }
 
-bool fullHouse(vector<Card> a){
+//flush: 5 cards in the same suit
+bool flush(vector<Card> &a){
 
 }
 
-bool flush(vector<Card> a){
+//straight: 5 cards in sequence
+bool straight(vector<Card> &a){
 
 }
 
-bool straight(vector<Card> a){
+//three of a kind: 3 cards of the same rank
+bool threeKind(vector<Card> &a){
 
 }
 
-bool threeKind(vector<Card> a){
+//two pair: 2 pairs of 2 cards in the same rank
+bool twoPair(vector<Card> &a){
 
 }
 
-bool twoPair(vector<Card> a){
+//pair: 2 cards in the same rank
+bool pair(vector<Card> &a){
 
 }
 
-bool pair(vector<Card> a){
-
+//high card: highest card in hand
+int highCard(vector<Card> a){
+  return highRank(a)+highSuit(a);
 }
 
-bool highCard(vector<Card> a){
-
-}
-
-bool Poker::rules(vector<Card> a){
-  int highest = 0, temp, pos;
-  suit highsuit = club; //lowest suit
-  rank highrank = 2;
-  for(i = 0; i < a.size(); i++){
-    temp = count(a.begin(), a.end(), a[i]);
-    if(temp > highest){
-      highest = temp;
-      pos = i;
-    }else if(temp == highest){
-      if(a[i].rank > highrank){
-        highrank = a[i].rank;
-        //?
-      }else if(a[i].rank == highrank){
-        if(a[i].suit > highsuit){
-          highsuit = a[i].suit;
-          //?
-        }
-      }
-    }
-  }
-
-
-  /*
-  10 royal flush: A,K,Q,J,10 of the same suit
-  9 straight flush: 5 cards in sequence of the same suit
-  8 four of a kind: 4 cards of the same rank
-  7 full house: 3 cards of the same rank with 2 cards of the same rank
-  6 flush: 5 cards in the same suit
-  5 straight: 5 cards in sequence
-  4 three of a kind: 3 cards of the same rank
-  3 two pair: 2 pairs of 2 cards in the same rank
-  4 pair: 2 cards in the same rank
-  1 high card: highest card in hand (cascading if statements so that high card is last resort)
-  */
-  //precedence: hand->rank->suit
+int Poker::highHand(vector<Card> player, vector<Card> dealer){
+  //joint hand
+  vector<Card> a;
+  //accumulate points for player's chance
+  chance = 0;
+  //merge p and d into a
+  merge(player.begin(),player.end(),dealer.begin(),dealer.end(),a.begin());
+  //call hands starting from highest, returns chance points based on highest hand acceived.
+  if(royalFlush(a)) chance = 9000 + highRank(a) + highSuit(a);
+  else if(straightFlush(a))chance = 8000 + highRank(a) + highSuit(a);
+  else if(fourKind(a))chance = 7000 + highRank(a) + highSuit(a);
+  else if(fullHouse(a))chance = 6000 + highRank(a) + highSuit(a);
+  else if(flush(a))chance = 5000 + highRank(a) + highSuit(a);
+  else if(straight(a))chance = 4000 + highRank(a) + highSuit(a);
+  else if(threeKind(a))chance = 3000 + highRank(a) + highSuit(a);
+  else if(twoPair(a))chance = 2000 + highRank(a) + highSuit(a);
+  else if(pair(a))chance = 1000 + highRank(a) + highSuit(a);
+  else chance = highRank(a) + highSuit(a);
+  return chance;
 }
