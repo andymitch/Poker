@@ -21,25 +21,23 @@ struct Card{
 struct Player{
   string name;
   Player* next;
-  vector <Card> hand;
+  vector <Card> hand; //push cards from deck to hand (vector in order to reference cards)
   float money;
-  Poker(string n); //human constructor
+  Player(string n); //human constructor
   Player(int); //bot constructor
   ~Player();
   void table(int);
 };
 
 class Poker{
-  vector<Card> dealer;
-  Player* player;
+  vector<Card> dealer; //push cards from deck to dealer (vector in order to reference cards)
   stack<Card> deck;
   float pot;
+  Player* player; //reference to player list
 public:
   Poker();
   ~Poker();
-  void deal();
-  stack<Card> shuffle();
+  void deal(); //push ONE card from deck to players' hands
+  stack<Card> shuffle(); //generate new stack of shuffled cards
   int rules(Player);
 };
-
-//order of linked list: dealer, player, bots...

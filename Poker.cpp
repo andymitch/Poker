@@ -21,6 +21,7 @@ Player::Player(int i){
 }
 
 Player::table(int i){
+
   for(int i = 2; i <= n; i++){
     Player* newPlayer = new Player(i)
     newPlayer->next = player;
@@ -30,23 +31,44 @@ Player::table(int i){
 
 //POKER CLASS (DE/CON)STRUCTORS & FUNCTIONS:
 /****************************************************************************/
-Poker(int i){
-  if(i == 2) player->name = "Alex";
-  else if(i == 3) player->name = "Brian";
-  else if(i == 4) player->name = "Carl";
-  else if(i == 5) player->name = "Derrek";
-  else player->name = "Mike";
-  player->next = nullptr;
+
+stack<Card> Poker::shuffle(){
+  vector<Card> _deck;
+  for(suits i = 0; i < 4; i++){
+    for(ranks j = 0; j < 13; j++){
+      Card temp = new Card(i,j);
+      _deck.push(temp);
+    }
+  }
+  random_shuffle(deck.begin(), deck.end());
+  stack<Card> deck;
+  while(!deck.empty()){
+    deck.push(_deck.end());
+    _deck.pop();
+  }
+  return deck;
 }
 
-Poker(string n){
-  player->name = n;
-  player->next = nullptr;
+void Poker::deal(){
+  deck = shuffle();
+  Player* turn = player;
+  while(turn != nullptr){
+    turn->hand.push_back(deck.top());
+    deck.pop();
+    turn = turn->next;
+  }
 }
 
+bool Poker::highCard(Card a, Card b){
+  if(a.rank > b.rank) return true;
+  else if(a.rank < b.rank) return false;
+  else{
+    if(a.suit > b.suit) return true;
+    else return false;
+  }
+}
 
-
-int rules(Player* p){
+int Poker::rules(Player* a, Player* b){
   vector<Card> hand = p->hand;
   /*
   10 royal flush: A,K,Q,J,10 of the same suit
@@ -64,17 +86,6 @@ int rules(Player* p){
   if(){
 
   }
-}
-
-vector<cards> Poker::shuffle(){ //maybe change container to stack
-  vector<Card> deck;
-  for(suits i = 0; i < 4; i++){
-    for(ranks j = 0; j < 13; j++){
-      Card temp = new Card(i,j);
-      deck.push_back(temp);
-    }
-  }
-  random_shuffle(deck.begin(), deck.end());
 }
 
 void RPNCalculator::push(float num){
