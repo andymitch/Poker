@@ -22,7 +22,7 @@ Player::Player(int i){
   chance = 0;
 }
 
-Player::table(int i){
+Player::table(int n){
 
   for(int i = 2; i <= n; i++){
     Player* newPlayer = new Player(i)

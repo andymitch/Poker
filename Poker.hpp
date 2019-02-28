@@ -25,11 +25,13 @@ struct Table{
   float pot;
 };
 
-class Player{
+struct Player{
   string name;
   Player* next;
-
-}poker;
+  vector<Card> hand;
+  float money;
+  int chance;
+};
 
 /******************************************************/
 

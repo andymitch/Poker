@@ -1,7 +1,8 @@
-#include "Poker.hpp"
+#include "Casino.hpp"
 #include <iostream>
 #include <algorythm>
 using namespace std;
+using namespace Poker;
 
 
 bool Poker::highest(Card a, Card b){
@@ -96,4 +97,8 @@ int Poker::highHand(vector<Card> player, vector<Card> dealer){
   else if(pair(a))chance = 1000 + highRank(a) + highSuit(a);
   else chance = highRank(a) + highSuit(a);
   return chance;
+}
+
+string Poker::decoder(int n){
+  if(n<9000)
 }
