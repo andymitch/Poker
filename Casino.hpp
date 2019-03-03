@@ -62,7 +62,7 @@ public:
 namespace poker{
   Table table;
   Player p;
-  p.setPlayers //reference country .cpp
+  p.setPlayers(); //reference country .cpp
   void newGame(string name, int opponents){
     Player* player = new Player(name);
     p.setplayers()
@@ -103,6 +103,7 @@ public:
   void bet(); //put bid amount into pot from player money
   void call(); //calls highHand() for every player: turn->chance = highHand();
   int highHand(hand, deck); //finds best cards in player's hand and returns their chance.
+  void printWinner(Player*);
 };
 
 class Blackjack: public Player{

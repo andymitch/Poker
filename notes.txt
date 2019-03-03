@@ -1,5 +1,10 @@
 TO DO:
 
+define hands
+work on header and driver, to initiate game.
+
+*****************
+
 consolidate and delete Poker.cpp, Poker.hpp, and Blackjack.hpp.
 
 enum: when building deck or checking high card, might not work.

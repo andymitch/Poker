@@ -5,32 +5,49 @@ using namespace std;
 using namespace Poker;
 
 
-bool Poker::highest(Card a, Card b){
+/*bool Poker::highest(Card a, Card b){
   if(a.rank > b.rank) return true;
   else if(a.rank < b.rank) return false;
   else{
     if(a.suit > b.suit) return true;
     else return false;
   }
-}
+}*/
 
 int highRank(vector<Card> a){
   Ranks rank = 0;
-  for (vector<int>::iterator it = a.begin() ; it != a.end(); ++it)
-    if(*it > rank) rank = *it;
+  for (auto i : a)
+    if(i->rank > rank) rank = i->rank;
   return rank*10;
 }
 
 int highSuit(vector<Card> a){
   Suits suit = 0;
   for (vector<int>::iterator it = a.begin() ; it != a.end(); ++it)
-    if(*it > suit) suit = *it;
+    if(i->suit > suit) suit = i->suit;
   return suit;
 }
 
 //royal flush: A,K,Q,J,10 of the same suit
 bool royalFlush(vector<Card> &a){
   //if royal flush, reduce hand to the royal flush. same with other functions.
+  for(auto i : a){
+    if(i->rank == A){
+      vector<Card> temp;
+      Suit suit = i->suit;
+      temp.push_back(i);
+      for(auto j : a){
+        if((j->suit == suit)&&(j->rank > 9)){
+          temp.push_back(j);
+        }
+      }
+      if(temp.size() == 5){
+        a = temp;
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 //straight flush: 5 cards in sequence of the same suit
@@ -73,11 +90,6 @@ bool pair(vector<Card> &a){
 
 }
 
-//high card: highest card in hand
-int highCard(vector<Card> a){
-  return highRank(a)+highSuit(a);
-}
-
 int Poker::highHand(vector<Card> player, vector<Card> dealer){
   //joint hand
   vector<Card> a;
@@ -99,6 +111,16 @@ int Poker::highHand(vector<Card> player, vector<Card> dealer){
   return chance;
 }
 
-string Poker::decoder(int n){
-  if(n<9000)
+void Poker::printWinner(Player* player){
+  cout << player->name << " won with a high ";
+  if(player->chance <= 9000) return "royal flush." << endl;
+  else if(player->chance <= 8000) cout << "straight flush." << endl;
+  else if(player->chance <= 7000) cout << "four of a kind." << endl;
+  else if(player->chance <= 6000) cout << "full house." << endl;
+  else if(player->chance <= 5000) cout << "flush." << endl;
+  else if(player->chance <= 4000) cout << "straight." << endl;
+  else if(player->chance <= 3000) cout << "three of a kind." << endl;
+  else if(player->chance <= 2000) cout << "two pair." << endl;
+  else if(player->chance <= 1000) cout << "pair." << endl;
+  else cout << "card." << endl;
 }

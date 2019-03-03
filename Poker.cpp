@@ -60,11 +60,3 @@ void Poker::deal(){
     turn = turn->next;
   }
 }
-
-void RPNCalculator::push(float num){
-  Operand* newOp = new Operand;
-  newOp->next = stackHead;
-  stackHead = newOp;
-  stackHead->number = num;
-  return;
-}
