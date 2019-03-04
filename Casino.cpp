@@ -1,60 +1,37 @@
-/*******************************************
-1 PLAYER TEXAS HOLD 'EM
-1 PLAYER BLACKJACK
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-CLEAR SCREEN (using <cstdlib>): system("clear");
-or function:
-void clearScreen() {
-  std::cout << "\033[2J\033[1;1H";
-}
-*******************************************/
-
-#include "Poker.hpp"
-#include "Blackjack.hpp"
+#include "Casino.hpp"
 #include <iostream>
+#include <vector>
 using namespace std;
 
 
-int main(int argc, char* argv[]){
-///////////////////////////////////////POKER//////////////////////////////////////////////////////////////////////////
-  if(argv[1] == "Poker"){
-    {
-    using namespace poker;
-    Poker play;
-    while(true){
-      cout << "\NTEXAS HOLD 'EM\N\NMAIN MENU\n~~~~~~~~~\n\n\t1. new game\n\t2. resume game\n\t3. quit\n\t0. return to menu (in game)"\n\n;
-      int x;
-      while(true){
-        cin << x;
-        switch(x){ //syntax: play.function(play.player);
-          case 1:
-          case 2:
-          case 3:
-          default: cout << "Invalid option, try (1-3)" << endl;
-        }
-      }
-    }
-    }
-///////////////////////////////////////BLACKJACK///////////////////////////////////////////////////////////////////
-  }else if(argv[1] == "Blackjack"){
-    {
-    using namespace blackjack;
-    Blackjack play;
-    while(true){
-      cout << "\NBLACKJACK\N\NMAIN MENU\n~~~~~~~~~\n\n\t1. new game\n\t2. resume game\n\t3. quit\n\t0. return to menu (in game)"\n\n;
-      int x;
-      while(true){
-        cin << x;
-        switch(x){
-          case 1:
-          case 2:
-          case 3:
-          default: cout << "Invalid option, try (1-3)" << endl;
-        }
-      }
-    }
-    }
-///////////////////////////////////////ERROR///////////////////////////////////////////////////////////////////
-  }else cerr << "ERR: try './casino poker' or './casino blackjack'" << endl;
-  return 0;
+
+
+//PLAYER CLASS
+Player::Player(string n){
+  name = n;
+  money = 100;
+  chance = 0;
+  next = nullptr;
 }
+Player::Player(int i){
+  if(i == 0) name = "Alex";
+  else if(i == 1) name = "Brian";
+  else if(i == 2) name = "Carl";
+  else if(i == 3) name = "Derrek";
+  else if(i == 4)name = "Mike";
+  money = 100;
+  chance = 0;
+  next = nullptr;
+}
+Player::void setplayers(Player* head, int n){
+  for(int i = 0; i < n; i++){
+    Player* newPlayer = new Player(i)
+    newPlayer->next = player;
+    player = newPlayer;
+  }
+}
+Player::void pushCard(Card c){this->card = c;}
+Player::string getName(){return this->name;}
+Player::vector<Card> getHand(){return this->hand;}
+Player::float getMoney(){return this->money;}
+Player::int getChance(){return this->chance;}

@@ -6,9 +6,6 @@
 using namespace std;
 
 
-enum suits{club, diamond, heart, spade}; //0-3 (4)
-enum ranks{2,3,4,5,6,7,8,9,10,J,Q,K,A}; //0-12 (13)
-
 struct Card{
   suits suit;
   ranks rank;

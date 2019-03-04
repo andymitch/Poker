@@ -23,9 +23,13 @@ Casino.hpp > Poker.cpp
 using namespace std;
 
 
+enum Suit{club, diamond, heart, spade}; //0-3 (4)
+enum Rank{2,3,4,5,6,7,8,9,10,J,Q,K,A}; //0-12 (13)
+enum Risk{low, mid, high}; //1-2 (3)
+
 struct Card{
-  suits suit;
-  ranks rank;
+  Suit suit;
+  Rank rank;
   Card(suits s, ranks r){
     suit = s;
     rank = r;
@@ -46,6 +50,7 @@ class Player: public Card{
   vector<Card> hand;
   float money;
   int chance;
+  Risk risk;
 public:
   Player(string, float, int);
   Player(int);
@@ -57,35 +62,39 @@ public:
   int getChance();
 };
 
-
+//POKER NAMESPACE
+/*****************************************************************************/
 
 namespace poker{
-  Table table;
-  Player p;
-  p.setPlayers(); //reference country .cpp
-  void newGame(string name, int opponents){
-    Player* player = new Player(name);
-    p.setplayers()
-  }
-  void menu();
-  void fold(); //quits hand, doesn't have to bet()
-  void raise(); //raise bid and move on, still have to bet()
-  void check(); //move on without raising bit, still have to bet()
-  void bet(); //put bid amount into pot from player money
-  void call(); //calls highHand() for every player: turn->chance = highHand();
-  int highHand(hand, deck); //finds best cards in player's hand and returns their chance.
 
-  void play(string); //main function
+  class Poker: public Player, public Table{
+    Table table;
+    Player player;
+  public:
+    Poker();
+    ~Poker();
+    void menu();
+    void fold(); //quits hand, doesn't have to bet()
+    void raise(); //raise bid and move on, still have to bet()
+    void check(); //move on without raising bit, still have to bet()
+    void bet(); //put bid amount into pot from player money
+    void call(); //calls highHand() for every player: turn->chance = highHand();
+    int highHand(hand, deck); //finds best cards in player's hand and returns their chance.
+  }
 }
+
+//BLACKJACK NAMESPACE
+/*****************************************************************************/
 
 namespace blackjack{
   void menu();
   Table table;
-  Player play;
+  Player blackjack;
 
   void play(string); //main function
 }
 
+//MESS...
 /****************************************************************************/
 
 

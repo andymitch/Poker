@@ -15,14 +15,14 @@ using namespace Poker;
 }*/
 
 int highRank(vector<Card> a){
-  Ranks rank = 0;
+  Rank rank = 0;
   for (auto i : a)
     if(i->rank > rank) rank = i->rank;
   return rank*10;
 }
 
 int highSuit(vector<Card> a){
-  Suits suit = 0;
+  Suit suit = 0;
   for (vector<int>::iterator it = a.begin() ; it != a.end(); ++it)
     if(i->suit > suit) suit = i->suit;
   return suit;
