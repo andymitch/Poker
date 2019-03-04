@@ -36,30 +36,28 @@ struct Card{
   }
 };
 
-struct Table: public Card{
+class Table{
   vector<Card> dealer; //push cards from deck to dealer
   stack<Card> deck;
-  float bid;
-  float pot;
-  stack<Card> shuffle(); //generate new stack of shuffled cards
+  float bigBlind, littleBlind, pot;
+public:
+  void shuffle(); //generate new stack of shuffled cards
+  void deal(); // deal ONE card to dealer and each player
+  void raisePot(float); //add money to pot
+  void peekPot(); //peek at pot
+  void setBlind();
 };
 
-class Player: public Card{
+struct Player{
   string name;
   Player* next;
   vector<Card> hand;
   float money;
   int chance;
   Risk risk;
-public:
   Player(string, float, int);
   Player(int);
-  void setplayers(Player*);
   void pushCard(Card);
-  string getName();
-  vector<Card> getHand();
-  float getMoney();
-  int getChance();
 };
 
 //POKER NAMESPACE
@@ -69,10 +67,12 @@ namespace poker{
 
   class Poker: public Player, public Table{
     Table table;
-    Player player;
+    Player* player;
   public:
     Poker();
     ~Poker();
+    void setplayers(int);
+    void setTable();
     void menu();
     void fold(); //quits hand, doesn't have to bet()
     void raise(); //raise bid and move on, still have to bet()
