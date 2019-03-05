@@ -4,8 +4,31 @@
 using namespace std;
 
 
+//CARD STRUCT
+/****************************************************************************/
+void Card:: printCard(Card card){
+  cout << card.rank;
+  Suit s = card.suit;
+  switch(s){
+    case club: cout << "\u2663";
+    break;
+    case diamond: cout << "\u2666";
+    break;
+    case heart: cout << "\u2665";
+    break;
+    case spade: cout << "\u2660";
+    break;
+    default: break;
+  }
+}
+
 //TABLE STRUCT
 /****************************************************************************/
+Table::Table(){
+  deck = shuffle();
+  littleBlind = bigBlind = 0;
+  pot = 0;
+}
 void Table::shuffle(){
   while(!deck.empty()) deck.pop(); //clear deck
   vector<Card> _deck;
@@ -60,8 +83,18 @@ Player::Player(int i){
   chance = 0;
   next = nullptr;
 }
-void Player::pushCard(Card c){this->card = c;}
-string Player::getName(){return this->name;}
-vector<Card> Player::getHand(){return this->hand;}
-float Player::getMoney(){return this->money;}
-int Player::getChance(){return this->chance;}
+void Player::pushCard(Card c){
+  this->card = c;
+}
+string Player::getName(){
+  return this->name;
+}
+vector<Card> Player::getHand(){
+  return this->hand;
+}
+float Player::getMoney(){
+  return this->money;
+}
+int Player::getChance(){
+  return this->chance;
+}

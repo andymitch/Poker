@@ -29,15 +29,9 @@ void Poker::setPlayers(int n){
   newPlayer->next = player;
   player = newPlayer;
 }
-void Poker::setTable(table){
-  table->deck = shuffle();
-  setBlind();
-  
-}
 
 
-
-Poker::void deal(){
+void Poker::deal(){
   table.deck = Poker::shuffle();
   Player* turn = player;
   while(turn != nullptr){
@@ -46,21 +40,21 @@ Poker::void deal(){
     turn = turn->next;
   }
 }
-Poker::stack<Card> shuffle(){
+stack<Card> Poker::shuffle(){
 
 }
-Poker::void fold(){
+void Poker::fold(){
 
 }
-Poker::void raise(){
+void Poker::raise(){
 
 }
-Poker::void check(){
+void Poker::check(){
 
 }
-Poker::void bet(){
+void Poker::bet(){
 
 }
-Poker::void call(){
+void Poker::call(){
 
 }

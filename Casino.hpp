@@ -23,9 +23,9 @@ Casino.hpp > Poker.cpp
 using namespace std;
 
 
-enum Suit{club, diamond, heart, spade}; //0-3 (4)
+enum Suit{club, diamond, heart, spade};
 enum Rank{2,3,4,5,6,7,8,9,10,J,Q,K,A}; //0-12 (13)
-enum Risk{low, mid, high}; //1-2 (3)
+enum Risk{low, mid, high};
 
 struct Card{
   Suit suit;
@@ -34,6 +34,7 @@ struct Card{
     suit = s;
     rank = r;
   }
+  void printCard(Card);
 };
 
 class Table{
@@ -55,7 +56,7 @@ struct Player{
   float money;
   int chance;
   Risk risk;
-  Player(string, float, int);
+  Player(string);
   Player(int);
   void pushCard(Card);
 };
@@ -72,7 +73,6 @@ namespace poker{
     Poker();
     ~Poker();
     void setplayers(int);
-    void setTable();
     void menu();
     void fold(); //quits hand, doesn't have to bet()
     void raise(); //raise bid and move on, still have to bet()
@@ -81,6 +81,7 @@ namespace poker{
     void call(); //calls highHand() for every player: turn->chance = highHand();
     int highHand(hand, deck); //finds best cards in player's hand and returns their chance.
   }
+
 }
 
 //BLACKJACK NAMESPACE
