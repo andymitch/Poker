@@ -45,13 +45,15 @@ string Card::printSuit(Suit suit){
         default: return "VOID";
     }
 }
-string Card::printCard() {return ("[" + printRank(rank) + printSuit(suit) + "]");}
+string Card::printCard(){
+  return ("[" + printRank(rank) + printSuit(suit) + "]");
+}
 
 Rank& operator++(Rank& r){return r = Rank(static_cast<int>(r)+1);}
 Suit& operator++(Suit& s){return s = Suit(static_cast<int>(s)+1);}
 ostream& operator<<(ostream& out, Card& obj){return out << obj.printCard();}
 
-int main()
+/*int main()
 {
     vector<Card> deck;
     Rank rank = Two;
@@ -64,6 +66,7 @@ int main()
         ++suit;
         rank = Two;
     }
+    cout << "\033[2J\033[1;1H";
     for(auto i : deck) cout << i;
     return 0;
-}
+}*/

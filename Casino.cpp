@@ -37,6 +37,7 @@ void Table::shuffle(){
       Card temp = new Card(i,j);
       _deck.push_back(temp);
     }
+    suit
   }
   random_shuffle(_deck.begin(), _deck.end());
   while(!_deck.empty()){
@@ -84,7 +85,7 @@ Player::Player(int i){
   next = nullptr;
 }
 void Player::pushCard(Card c){
-  this->card = c;
+  card = c;
 }
 string Player::getName(){
   return this->name;
