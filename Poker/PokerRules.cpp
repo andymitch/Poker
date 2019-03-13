@@ -111,16 +111,16 @@ int Poker::highHand(vector<Card> player, vector<Card> dealer){
   return chance;
 }
 
-void Poker::printWinner(Player* player){
-  cout << player->name << " won with a high ";
+void Poker::printWinner(Player player){
+  cout << player.name << " won with a high ";
   if(player->chance <= 9000) return "royal flush." << endl;
-  else if(player->chance <= 8000) cout << "straight flush." << endl;
-  else if(player->chance <= 7000) cout << "four of a kind." << endl;
-  else if(player->chance <= 6000) cout << "full house." << endl;
-  else if(player->chance <= 5000) cout << "flush." << endl;
-  else if(player->chance <= 4000) cout << "straight." << endl;
-  else if(player->chance <= 3000) cout << "three of a kind." << endl;
-  else if(player->chance <= 2000) cout << "two pair." << endl;
-  else if(player->chance <= 1000) cout << "pair." << endl;
+  else if(player.chance <= 8000) cout << "straight flush." << endl;
+  else if(player.chance <= 7000) cout << "four of a kind." << endl;
+  else if(player.chance <= 6000) cout << "full house." << endl;
+  else if(player.chance <= 5000) cout << "flush." << endl;
+  else if(player.chance <= 4000) cout << "straight." << endl;
+  else if(player.chance <= 3000) cout << "three of a kind." << endl;
+  else if(player.chance <= 2000) cout << "two pair." << endl;
+  else if(player.chance <= 1000) cout << "pair." << endl;
   else cout << "card." << endl;
 }
