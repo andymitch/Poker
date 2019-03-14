@@ -113,11 +113,23 @@ public:
   bool isBroke(Player p){
     return (p.money < 1);
   }
-  float getUserMoney(){
+  /*float getUserMoney(){
     return USER->money;
-  }
+  }*/
   bool isUser(Player p){
     return(USER == &p);
+  }
+  Player getWinner(){
+    vector<Player> temp = players;
+    vector<Player>::iterator it, t;
+    for(it = temp.begin(); it != temp.end()-1; it++){
+      if(it->chance > (it+1)->chance){
+        t = it;
+        it = (it+1);
+        (it+1) = t;
+      }
+    }
+    return temp.back();
   }
   vector<Player> setPlayers(int);
   stack<Card> getDeck();
@@ -132,7 +144,8 @@ public:
   void makeBet();
   void call();
   void reset();
-  bool byRank(const Card&, const Card&);
+  bool byRank(Card, Card);
+  void sortByRank(vector<vector<Card>>&);
   vector<vector<Card>> sortHand(Player);
   int setChance(); //set every player's chance
 };
@@ -297,7 +310,7 @@ void Poker::makeBet(){
   }
 }
 void Poker::call(){
-  Player& winner = max_element(players.begin(), players.end(), [](const Player& a, const Player& b) {return a.chance < b.chance;});
+  Player winner = getWinner();
   winner.money += pot;
   pot = 0;
   printTable();
@@ -305,7 +318,7 @@ void Poker::call(){
 }
 void Poker::reset(){
   for(auto& p : players){
-    if(p.money < 1) players.erase(p);
+    if(p.money < 1) players.erase(*p);
     else{
       p.call = p.fold = false;
       p.hand.clear();
@@ -393,7 +406,7 @@ bool fullHouse(vector<vector<Card>>& a){
     c = a;
     if(aPair(b)){
       d = b;
-      if(c.front() != d.front()){
+      if(c.begin() != d.begin()){
         merge(c.begin(), c.end(), d.begin(), d.begin(), a.begin());
         return true;
       }
@@ -469,7 +482,7 @@ bool twoPair(vector<vector<Card>>& a){
     b = a;
     for(auto& suit : c){ // std::erase cards that we already visited
       for(auto& card : suit){
-        if(card.rank >= a[0][0]) a.erase(card);
+        if(card.rank >= a[0][0].rank) a.erase(*card);
       }
     }
     if(aPair(c)){
@@ -500,7 +513,20 @@ bool aPair(vector<vector<Card>>& a){
   }
   return false;
 }
-bool Poker::byRank(const Card& a, const Card& b){return (a.rank < b.rank);}
+bool Poker::byRank(Card a, Card b){return (a.rank < b.rank);}
+void Poker::sortByRank(vector<vector<Card>>& hand){
+  for(auto& suit : hand){
+    for(int i = 0; i < hand.size()-1; i++){
+      for(int j = hand.size()-1; j > i; j--){
+        if(hand[j] > hand[j-1]){
+          Card temp = hand[j];
+          hand[j] = hand[j-1];
+          hand[j-1] = temp;
+        }
+      }
+    }
+  }
+}
 vector<vector<Card>> Poker::sortHand(Player p){
   vector<Card> hand;
   vector<vector<Card>> sh(4);
@@ -510,7 +536,7 @@ vector<vector<Card>> Poker::sortHand(Player p){
     vector<Card> temp;
     for(auto c : hand){
       if(c.suit == suit) temp.push_back(c);
-      sort(sh.begin(), sh.end(), byRank);
+      sortByRank(sh);
       sh.push_back(temp);
       ++suit;
     }
@@ -542,7 +568,7 @@ int Poker::setChance(){
 namespace poker{
   void play(){
     Poker p(5);
-    while(!isBroke(getUser())){ //user isn't broke
+    while(!p.isBroke(p.getUser())){ //user isn't broke
       p.deal();
       p.deal();
       p.makeBet();
