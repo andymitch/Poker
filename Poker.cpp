@@ -97,15 +97,27 @@ class Poker{
   vector<Card> dealer;
   vector<Player> players;
   float bigBlind, littleBlind, pot, bet;
+  Player* USER;
 public:
-  vector<Player>::iterator USER;
   Poker(int i){
     deck = getDeck();
     bigBlind = littleBlind = pot = bet = 0;
     players = setPlayers(i);
-    USER = players.begin();
+    USER = &players[0];
     setBlind();
     bet = bigBlind;
+  }
+  Player getUser(){
+    return *USER;
+  }
+  bool isBroke(Player p){
+    return (p.money < 1);
+  }
+  float getUserMoney(){
+    return USER->money;
+  }
+  bool isUser(Player p){
+    return(USER == &p);
   }
   vector<Player> setPlayers(int);
   stack<Card> getDeck();
@@ -209,7 +221,7 @@ void Poker::deal(){
   }
 }
 float Poker::raise(Player p){
-  if(*p == USER){
+  if(isUser(p)){
     cout << "Current bet: $" << bet << endl;
     cout << "How much do you want to raise the bet to?: $";
     float raise;
@@ -240,11 +252,11 @@ float Poker::raise(Player p){
 }
 int Poker::getMove(Player p){
   if(p.money < bet){
-    if(*p == USER) cout << "You don't have enough money to cover the bet; you must fold." << endl;
+    if(isUser(p)) cout << "You don't have enough money to cover the bet; you must fold." << endl;
     return 3;
   }
   setChance();
-  if(*p == USER){ //user choice
+  if(isUser(p)){ //user choice
     cout << "What's your move?:" << endl;
     cout << "\t1. raise" << endl;
     cout << "\t2. check" << endl;
@@ -293,7 +305,7 @@ void Poker::call(){
 }
 void Poker::reset(){
   for(auto& p : players){
-    if(p.money > 1) players.erase(p);
+    if(p.money < 1) players.erase(p);
     else{
       p.call = p.fold = false;
       p.hand.clear();
@@ -530,7 +542,7 @@ int Poker::setChance(){
 namespace poker{
   void play(){
     Poker p(5);
-    while(p.USER->money > 0){ //user isn't broke
+    while(!isBroke(getUser())){ //user isn't broke
       p.deal();
       p.deal();
       p.makeBet();
