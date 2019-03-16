@@ -147,7 +147,7 @@ public:
   bool byRank(Card, Card);
   void sortByRank(vector<vector<Card>>&);
   vector<vector<Card>> sortHand(Player);
-  int setChance(); //set every player's chance
+  void setChance(); //set every player's chance
 };
 
 stack<Card> Poker::getDeck(){
@@ -317,11 +317,11 @@ void Poker::call(){
   printWinner(winner);
 }
 void Poker::reset(){
-  for(auto& p : players){
-    if(p.money < 1) players.erase(*p);
+  for(int i = 0; i < players.size(); i++){
+    if(players[i].money < 1) players.erase(players.begin()+i);
     else{
-      p.call = p.fold = false;
-      p.hand.clear();
+      players[i].call = players[i].fold = false;
+      players[i].hand.clear();
     }
   }
   while(!deck.empty()) deck.pop();
@@ -398,20 +398,23 @@ bool fourKind(vector<vector<Card>>& a){
   }
   return false;
 }
+vector<vector<Card>> join_vectors(vector<vector<Card>> a, vector<vector<Card>> b){
+  vector<vector<Card>> c;
+  for(auto i : a) c.push_back(i);
+  for(auto j : a) c.push_back(j);
+  return c;
+}
 bool fullHouse(vector<vector<Card>>& a){
   //full house: 3 cards of the same rank with 2 cards of the same rank
-  vector<vector<Card>> b = a;
-  vector<vector<Card>> c,d;
-  if(threeKind(a)){
-    c = a;
-    if(aPair(b)){
-      d = b;
-      if(c.begin() != d.begin()){
-        merge(c.begin(), c.end(), d.begin(), d.begin(), a.begin());
+  vector<vector<Card>> b = a, c = a; // c is safety vector
+  if(threeKind(a)){ //modify a
+    if(aPair(b)){ //modify copy of a
+      if(a.begin() != b.begin()){ // if pair != three (ie. same cards within)
+        a = join_vectors(a,b);
         return true;
       }
     }
-    else a = b;
+    else a = c; //restore a
   }
   return false;
 }
@@ -476,17 +479,15 @@ bool threeKind(vector<vector<Card>>& a){
 }
 bool twoPair(vector<vector<Card>>& a){
   //two pair: 2 pairs of 2 cards in the same rank
-  vector<vector<Card>> c = a;
-  vector<vector<Card>> b;
+  vector<vector<Card>> b = a;
   if(aPair(a)){
-    b = a;
-    for(auto& suit : c){ // std::erase cards that we already visited
-      for(auto& card : suit){
-        if(card.rank >= a[0][0].rank) a.erase(*card);
+    for(auto& suit : b){ // erase cards that we already visited
+      for(int i = 0; i < suit.size(); i++){
+        if(suit[i].rank >= a[0][0].rank) suit.erase(suit.begin()+i);
       }
     }
-    if(aPair(c)){
-      merge(b.begin(), b.end(), c.begin(), c.end(), a.begin());
+    if(aPair(b)){
+      a = join_vectors(a, b);
       return true;
     }
   }
@@ -516,12 +517,13 @@ bool aPair(vector<vector<Card>>& a){
 bool Poker::byRank(Card a, Card b){return (a.rank < b.rank);}
 void Poker::sortByRank(vector<vector<Card>>& hand){
   for(auto& suit : hand){
-    for(int i = 0; i < hand.size()-1; i++){
-      for(int j = hand.size()-1; j > i; j--){
-        if(hand[j] > hand[j-1]){
-          Card temp = hand[j];
-          hand[j] = hand[j-1];
-          hand[j-1] = temp;
+    for(int i = 0; i < suit.size()-1; i++){
+      for(int j = suit.size()-1; j > i; j--){
+        if(suit[j].rank > suit[j-1].rank){
+          swap(suit[j-1], suit[j]);
+          //Card temp = hand[j];
+          //hand[j] = hand[j-1];
+          //hand[j-1] = temp;
         }
       }
     }
@@ -530,7 +532,7 @@ void Poker::sortByRank(vector<vector<Card>>& hand){
 vector<vector<Card>> Poker::sortHand(Player p){
   vector<Card> hand;
   vector<vector<Card>> sh(4);
-  merge(p.hand.begin(), p.hand.end(), dealer.begin(), dealer.end(), hand.begin());
+  sh = join_vectors(p.hand, dealer); //fix: p.hand and dealer are v<C> but func requires v<v<C>>
   Suit suit = club;
   for(auto s : sh){
     vector<Card> temp;
@@ -544,7 +546,7 @@ vector<vector<Card>> Poker::sortHand(Player p){
   }
   return sh;
 }
-int Poker::setChance(){
+void Poker::setChance(){
   int chance;
   for(auto& p : players){
     p.chance = 0; //reset chance
