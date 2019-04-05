@@ -1,3 +1,4 @@
+#include <Casino.hpp>
 #include <iostream>
 #include <vector>
 #include <stack>
@@ -7,149 +8,75 @@
 #include <chrono> //chrono::seconds
 #include <cstdlib>
 using namespace std;
+using namespace poker;
 
 
-//CARD STRUCT
-/*****************************************************************************/
-enum Suit{club, diamond, heart, spade};
-enum Rank{Two,Three,Four,Five,Six,Seven,Eight,Nine,Ten,J,Q,K,A};
-
-struct Card{
-    Rank rank;
-    Suit suit;
-    Card();
-    Card(Rank r, Suit s){
-        rank = r;
-        suit = s;
-    }
-    string printRank(Rank);
-    string printSuit(Suit);
-    string printCard();
-};
-
-Rank& operator++(Rank& r){return r = Rank(static_cast<int>(r)+1);}
-Suit& operator++(Suit& s){return s = Suit(static_cast<int>(s)+1);}
-Rank& operator--(Rank& r){return r = Rank(static_cast<int>(r)-1);}
-Suit& operator--(Suit& s){return s = Suit(static_cast<int>(s)-1);}
-ostream& operator<<(ostream& out, Card& obj){return out << obj.printCard();}
-
-
-string Card::printRank(Rank rank){
-    switch (rank){
-        case Two: return "2";
-        case Three: return "3";
-        case Four: return "4";
-        case Five: return "5";
-        case Six: return "6";
-        case Seven: return "7";
-        case Eight: return "8";
-        case Nine: return "9";
-        case Ten: return "T";
-        case J: return "J";
-        case Q: return "Q";
-        case K: return "K";
-        case A: return "A";
-        default: return "VOID";
-    }
-}
-string Card::printSuit(Suit suit){
-    switch(suit){
-        case club: return "\u2663";
-        case diamond: return "\u2666";
-        case heart: return "\u2665";
-        case spade: return "\u2660";
-        default: return "VOID";
-    }
-}
-string Card::printCard(){
-  return ("[" + printRank(rank) + printSuit(suit) + "]");
+//PLAY
+/******************************************************************************/
+void play(){
+  Poker p(5);
+  while(!p.isBroke(p.getUser())){ //user isn't broke
+    p.deal();
+    p.deal();
+    p.makeBet();
+    p.lay();
+    p.lay();
+    p.lay();
+    p.makeBet();
+    p.lay();
+    p.makeBet();
+    p.lay();
+    p.makeBet();
+    p.call();
+    p.reset(); //reset table, keep players
+  }
 }
 
-//PLAYER STRUCT
-/*****************************************************************************/
-struct Player{
-  string name;
-  vector<Card> hand;
-  float money;
-  int chance;
-  bool call, fold, turn;
-  Player(){}
-  Player(int i){
-    if(i == 0) name = "You";
-    else if(i == 1) name = "Alex";
-    else if(i == 2) name = "Brian";
-    else if(i == 3) name = "Carl";
-    else if(i == 4) name = "Derrek";
-    else if(i == 5) name = "Mike";
-    money = 100;
-    call = fold = turn = false;
-  }
-  float makeBet(float bet){
-    money -= bet;
-    return bet;
-  }
-};
+//PLAYER DECLARATION
+/******************************************************************************/
+Player::Player(){}
+Player::Player(int i){
+  if(i == 0) name = "You";
+  else if(i == 1) name = "Alex";
+  else if(i == 2) name = "Brian";
+  else if(i == 3) name = "Carl";
+  else if(i == 4) name = "Derrek";
+  else if(i == 5) name = "Mike";
+  money = 100;
+  call = fold = turn = false;
+}
 
-//POKER CLASS
-/*****************************************************************************/
-class Poker{
-  stack<Card> deck;
-  vector<Card> dealer;
-  vector<Player> players;
-  float bigBlind, littleBlind, pot, bet;
-  Player* USER;
-public:
-  Poker(int i){
-    deck = getDeck();
-    bigBlind = littleBlind = pot = bet = 0;
-    players = setPlayers(i);
-    USER = &players[0];
-    setBlind();
-    bet = bigBlind;
-  }
-  Player getUser(){
-    return *USER;
-  }
-  bool isBroke(Player p){
-    return (p.money < 1);
-  }
-  /*float getUserMoney(){
-    return USER->money;
-  }*/
-  bool isUser(Player p){
-    return(USER == &p);
-  }
-  Player getWinner(){
-    vector<Player> temp = players;
-    vector<Player>::iterator it, t;
-    for(it = temp.begin(); it != temp.end()-1; it++){
-      if(it->chance > (it+1)->chance){
-        t = it;
-        it = (it+1);
-        (it+1) = t;
-      }
+//POKER DECLARATION
+/******************************************************************************/
+Poker::Poker(int i){
+  deck = getDeck();
+  bigBlind = littleBlind = pot = bet = 0;
+  players = setPlayers(i);
+  USER = &players[0];
+  setBlind();
+  bet = bigBlind;
+}
+Player Poker::getUser(){
+  return *USER;
+}
+bool Poker::isBroke(Player p){
+  return (p.money < 1);
+}
+bool Poker::isUser(Player p){
+  return(USER == &p);
+}
+Player Poker::getWinner(){
+  vector<Player> temp = players;
+  vector<Player>::iterator it, t;
+  for(it = temp.begin(); it != temp.end()-1; it++){
+    if(it->chance > (it+1)->chance){
+      t = it;
+      it = (it+1);
+      (it+1) = t;
     }
-    return temp.back();
   }
-  vector<Player> setPlayers(int);
-  stack<Card> getDeck();
-  void setBlind();
-  void printTable();
-  void printWinner(Player);
-  void lay();
-  void deal();
-  float raise(Player);
-  int getMove(Player);
-  bool iscall();
-  void makeBet();
-  void call();
-  void reset();
-  bool byRank(Card, Card);
-  void sortByRank(vector<Card>&);
-  vector<vector<Card>> sortHand(Player);
-  void setChance(); //set every player's chance
-};
-
+  return temp.back();
+}
 stack<Card> Poker::getDeck(){
   vector<Card> _deck;
   Rank rank = Two;
@@ -329,10 +256,30 @@ void Poker::reset(){
   bigBlind = littleBlind = bet = 0;
 }
 
-//POKER::GETCHANCE()
+//POKER::GETCHANCE FUNCTION
 /*****************************************************************************/
-bool threeKind(vector<vector<Card>>&); //declaration
-bool aPair(vector<vector<Card>>&); //declaration
+vector<Card> join_vector(vector<Card> a, vector<Card> b){
+  vector<Card> c;
+  for(auto i : a) c.push_back(i);
+  for(auto j : b) c.push_back(j);
+  return c;
+}
+vector<vector<Card>> join_vectors(vector<vector<Card>> a, vector<vector<Card>> b){
+  vector<vector<Card>> c;
+  for(auto i : a) c.push_back(i);
+  for(auto j : a) c.push_back(j);
+  return c;
+}
+void sortByRank(vector<Card>& suit){
+  for(int i = 0; i < suit.size()-1; i++){
+    for(int j = suit.size()-1; j > i; j--){
+      if(suit[j].rank > suit[j-1].rank){
+        swap(suit[j-1], suit[j]);
+      }
+    }
+  }
+  reverse(suit.begin(), suit.end());
+}
 int highCard(vector<vector<Card>> a){
   Rank rank = Two;
   Suit suit = club;
@@ -343,50 +290,53 @@ int highCard(vector<vector<Card>> a){
     return ((a[0][0].rank*10) + a[0][0].suit);
   }
 }
-bool royalFlush(vector<vector<Card>>& a){
-  //royal flush: 5 royal cards in sequence (10-A) of the same suit
+
+bool aPair(vector<vector<Card>>& a){
+  //pair: 2 cards in the same rank
+  for(auto s : a) reverse(s.begin(), s.end());
   for(auto suit : a){
-    if(suit[0].rank == 10 && suit.size() == 5){
-      vector<vector<Card>> temp;
-      temp.push_back(suit);
-      a = temp;
+    for(auto card : suit){
+      for(auto compSuit : a){
+        for(auto compCard : compSuit){
+          if(card.rank == compCard.rank){
+            vector<Card> temp;
+            temp.push_back(card);
+            temp.push_back(compCard);
+            a.clear();
+            a.push_back(temp);
+            return true;
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+bool twoPair(vector<vector<Card>>& a){
+  //two pair: 2 pairs of 2 cards in the same rank
+  vector<vector<Card>> b = a;
+  if(aPair(a)){
+    for(auto& suit : b){ // erase cards that we already visited
+      for(int i = 0; i < suit.size(); i++){
+        if(suit[i].rank >= a[0][0].rank) suit.erase(suit.begin()+i);
+      }
+    }
+    if(aPair(b)){
+      a = join_vectors(a, b);
       return true;
     }
   }
   return false;
 }
-bool straightFlush(vector<vector<Card>>& a){
-  //straight flush: 5 cards in sequence of the same suit
-  for(auto suit : a){
-    reverse(suit.begin(), suit.end());
-    Rank rank = suit[0].rank;
-    vector<Card> winSuit;
-    winSuit.push_back(suit[0]);
-    for(auto card : suit){
-      if(card.rank != --rank){
-        rank = card.rank;
-        winSuit.clear();
-      }
-      winSuit.push_back(card);
-      if(winSuit.size() == 5){
-        vector<vector<Card>> temp;
-        temp.push_back(suit);
-        a = temp;
-        return true;
-      }
-    }
-  }
-  return false;
-}
-bool fourKind(vector<vector<Card>>& a){
-  //four of a kind: 4 cards of the same rank
+bool threeKind(vector<vector<Card>>& a){
+  //three of a kind: 3 cards of the same rank
   vector<Card> sameRank;
   for(int i = (a[0].size()-1); i >= 0; i--){
     sameRank.push_back(a[0][i]);
     for(int j = 1; j < 4; j++){
       for(auto c : a[j]){
         if(c.rank == sameRank[0].rank) sameRank.push_back(c);
-        if(sameRank.size() == 4){
+        if(sameRank.size() == 3){
           vector<vector<Card>> temp;
           temp.push_back(sameRank);
           a = temp;
@@ -395,36 +345,6 @@ bool fourKind(vector<vector<Card>>& a){
       }
     }
     sameRank.clear();
-  }
-  return false;
-}
-vector<vector<Card>> join_vectors(vector<vector<Card>> a, vector<vector<Card>> b){
-  vector<vector<Card>> c;
-  for(auto i : a) c.push_back(i);
-  for(auto j : a) c.push_back(j);
-  return c;
-}
-bool fullHouse(vector<vector<Card>>& a){
-  //full house: 3 cards of the same rank with 2 cards of the same rank
-  vector<vector<Card>> b = a, c = a; // c is safety vector
-  if(threeKind(a)){ //modify a
-    if(aPair(b)){ //modify copy of a
-      if(a.begin() != b.begin()){ // if pair != three (ie. same cards within)
-        a = join_vectors(a,b);
-        return true;
-      }
-    }
-    else a = c; //restore a
-  }
-  return false;
-}
-bool flush(vector<vector<Card>>& a){
-  //flush: 5 cards in the same suit
-  for(auto s : a) if(s.size() == 5){
-    vector<vector<Card>> temp;
-    temp.push_back(s);
-    a = temp;
-    return true;
   }
   return false;
 }
@@ -457,15 +377,39 @@ bool straight(vector<vector<Card>>& a){
   }
   return false;
 }
-bool threeKind(vector<vector<Card>>& a){
-  //three of a kind: 3 cards of the same rank
+bool flush(vector<vector<Card>>& a){
+  //flush: 5 cards in the same suit
+  for(auto s : a) if(s.size() == 5){
+    vector<vector<Card>> temp;
+    temp.push_back(s);
+    a = temp;
+    return true;
+  }
+  return false;
+}
+bool fullHouse(vector<vector<Card>>& a){
+  //full house: 3 cards of the same rank with 2 cards of the same rank
+  vector<vector<Card>> b = a, c = a; // c is safety vector
+  if(threeKind(a)){ //modify a
+    if(aPair(b)){ //modify copy of a
+      if(a.begin() != b.begin()){ // if pair != three (ie. same cards within)
+        a = join_vectors(a,b);
+        return true;
+      }
+    }
+    else a = c; //restore a
+  }
+  return false;
+}
+bool fourKind(vector<vector<Card>>& a){
+  //four of a kind: 4 cards of the same rank
   vector<Card> sameRank;
   for(int i = (a[0].size()-1); i >= 0; i--){
     sameRank.push_back(a[0][i]);
     for(int j = 1; j < 4; j++){
       for(auto c : a[j]){
         if(c.rank == sameRank[0].rank) sameRank.push_back(c);
-        if(sameRank.size() == 3){
+        if(sameRank.size() == 4){
           vector<vector<Card>> temp;
           temp.push_back(sameRank);
           a = temp;
@@ -477,63 +421,42 @@ bool threeKind(vector<vector<Card>>& a){
   }
   return false;
 }
-bool twoPair(vector<vector<Card>>& a){
-  //two pair: 2 pairs of 2 cards in the same rank
-  vector<vector<Card>> b = a;
-  if(aPair(a)){
-    for(auto& suit : b){ // erase cards that we already visited
-      for(int i = 0; i < suit.size(); i++){
-        if(suit[i].rank >= a[0][0].rank) suit.erase(suit.begin()+i);
+bool straightFlush(vector<vector<Card>>& a){
+  //straight flush: 5 cards in sequence of the same suit
+  for(auto suit : a){
+    reverse(suit.begin(), suit.end());
+    Rank rank = suit[0].rank;
+    vector<Card> winSuit;
+    winSuit.push_back(suit[0]);
+    for(auto card : suit){
+      if(card.rank != --rank){
+        rank = card.rank;
+        winSuit.clear();
+      }
+      winSuit.push_back(card);
+      if(winSuit.size() == 5){
+        vector<vector<Card>> temp;
+        temp.push_back(suit);
+        a = temp;
+        return true;
       }
     }
-    if(aPair(b)){
-      a = join_vectors(a, b);
+  }
+  return false;
+}
+bool royalFlush(vector<vector<Card>>& a){
+  //royal flush: 5 royal cards in sequence (10-A) of the same suit
+  for(auto suit : a){
+    if(suit[0].rank == 10 && suit.size() == 5){
+      vector<vector<Card>> temp;
+      temp.push_back(suit);
+      a = temp;
       return true;
     }
   }
   return false;
 }
-bool aPair(vector<vector<Card>>& a){
-  //pair: 2 cards in the same rank
-  for(auto s : a) reverse(s.begin(), s.end());
-  for(auto suit : a){
-    for(auto card : suit){
-      for(auto compSuit : a){
-        for(auto compCard : compSuit){
-          if(card.rank == compCard.rank){
-            vector<Card> temp;
-            temp.push_back(card);
-            temp.push_back(compCard);
-            a.clear();
-            a.push_back(temp);
-            return true;
-          }
-        }
-      }
-    }
-  }
-  return false;
-}
-bool Poker::byRank(Card a, Card b){return (a.rank < b.rank);}
-void Poker::sortByRank(vector<Card>& suit){
-  for(int i = 0; i < suit.size()-1; i++){
-    for(int j = suit.size()-1; j > i; j--){
-      if(suit[j].rank > suit[j-1].rank){
-        swap(suit[j-1], suit[j]);
-        //Card temp = hand[j];
-        //hand[j] = hand[j-1];
-        //hand[j-1] = temp;
-      }
-    }
-  }
-  reverse(suit.begin(), suit.end());
-}
-vector<Card> join_vector(vector<Card> a, vector<Card> b){
-  vector<Card> c;
-  for(auto i : a) c.push_back(i);
-  for(auto j : b) c.push_back(j);
-  return c;
-}
+
 vector<vector<Card>> Poker::sortHand(Player p){
   vector<vector<Card>> sh(4);
   vector<Card> hand = join_vector(p.hand, dealer);
@@ -563,32 +486,4 @@ void Poker::setChance(){
     else chance = highCard(hand);
     p.chance = chance*100/9134;
   }
-}
-
-//MAIN
-/*****************************************************************************/
-namespace poker{
-  void play(){
-    Poker p(5);
-    while(!p.isBroke(p.getUser())){ //user isn't broke
-      p.deal();
-      p.deal();
-      p.makeBet();
-      p.lay();
-      p.lay();
-      p.lay();
-      p.makeBet();
-      p.lay();
-      p.makeBet();
-      p.lay();
-      p.makeBet();
-      p.call();
-      p.reset(); //reset table, keep players
-    }
-  }
-}
-
-int main(){
-  poker::play();
-  return 0;
 }
