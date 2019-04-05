@@ -145,7 +145,7 @@ public:
   void call();
   void reset();
   bool byRank(Card, Card);
-  void sortByRank(vector<vector<Card>>&);
+  void sortByRank(vector<Card>&);
   vector<vector<Card>> sortHand(Player);
   void setChance(); //set every player's chance
 };
@@ -182,7 +182,7 @@ void Poker::setBlind(){
 }
 void Poker::printTable(){
   //dimensions: 80X24
-  this_thread::sleep_for (chrono::seconds(1));
+  this_thread::sleep_for(chrono::seconds(1));
   cout << "\033[2J\033[1;1H"; //clear screen sorta
   for(int x = 0; x < 80; x++) cout << '*'; //top border
   cout << "\n\n";
@@ -515,35 +515,35 @@ bool aPair(vector<vector<Card>>& a){
   return false;
 }
 bool Poker::byRank(Card a, Card b){return (a.rank < b.rank);}
-void Poker::sortByRank(vector<vector<Card>>& hand){
-  for(auto& suit : hand){
-    for(int i = 0; i < suit.size()-1; i++){
-      for(int j = suit.size()-1; j > i; j--){
-        if(suit[j].rank > suit[j-1].rank){
-          swap(suit[j-1], suit[j]);
-          //Card temp = hand[j];
-          //hand[j] = hand[j-1];
-          //hand[j-1] = temp;
-        }
+void Poker::sortByRank(vector<Card>& suit){
+  for(int i = 0; i < suit.size()-1; i++){
+    for(int j = suit.size()-1; j > i; j--){
+      if(suit[j].rank > suit[j-1].rank){
+        swap(suit[j-1], suit[j]);
+        //Card temp = hand[j];
+        //hand[j] = hand[j-1];
+        //hand[j-1] = temp;
       }
     }
   }
+  reverse(suit.begin(), suit.end());
+}
+vector<Card> join_vector(vector<Card> a, vector<Card> b){
+  vector<Card> c;
+  for(auto i : a) c.push_back(i);
+  for(auto j : b) c.push_back(j);
+  return c;
 }
 vector<vector<Card>> Poker::sortHand(Player p){
-  vector<Card> hand;
   vector<vector<Card>> sh(4);
-  sh = join_vectors(p.hand, dealer); //fix: p.hand and dealer are v<C> but func requires v<v<C>>
-  Suit suit = club;
-  for(auto s : sh){
-    vector<Card> temp;
-    for(auto c : hand){
-      if(c.suit == suit) temp.push_back(c);
-      sortByRank(sh);
-      sh.push_back(temp);
-      ++suit;
-    }
-    reverse(sh.begin(), sh.end());
+  vector<Card> hand = join_vector(p.hand, dealer);
+  int i = 0;
+  for(Suit suit = club; suit <= spade; ++suit){
+    for(auto card : hand) if(card.suit == suit) sh[i].push_back(card);
+    i++;
   }
+  for(auto s : sh) sortByRank(s);
+  reverse(sh.begin(), sh.end());
   return sh;
 }
 void Poker::setChance(){
