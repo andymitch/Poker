@@ -80,64 +80,65 @@ struct Player{
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace poker{
-  //PLAY
-  /****************************************************************************/
-  void play();
-  //PLAYER STRUCT
-  /****************************************************************************/
-  struct Player : public Person{
-    int chance;
-    bool call, fold, turn;
-    Player();
-    Player(int);
-  };
+//PLAY
+/****************************************************************************/
+void play();
 
-  //POKER CLASS
-  /****************************************************************************/
-  class Poker{
-    stack<Card> deck;
-    vector<Card> dealer;
-    vector<Player> players;
-    float bigBlind, littleBlind, pot, bet;
-    Player* USER;
-  public:
-    Poker(int);
-    Player getUser();
-    bool isBroke(Player);
-    bool isUser(Player);
-    Player getWinner();
-    vector<Player> setPlayers(int);
-    stack<Card> getDeck();
-    void setBlind();
-    void printTable();
-    void printWinner(Player);
-    void lay();
-    void deal();
-    float raise(Player);
-    int getMove(Player);
-    bool iscall();
-    void makeBet();
-    void call();
-    void reset();
-    void sortByRank(vector<Card>&);
-    vector<vector<Card>> sortHand(Player);
-    void setChance(); //set every player's chance
-  };
-}
+//PLAYER STRUCT
+/****************************************************************************/
+struct PokerPlayer : public Player{
+  int chance;
+  bool call, fold, turn;
+  Player();
+  Player(int);
+};
+
+//POKER CLASS
+/****************************************************************************/
+class Poker{
+  stack<Card> deck;
+  vector<Card> dealer;
+  vector<PokerPlayer> players;
+  float bigBlind, littleBlind, pot, bet;
+  PokerPlayer* USER;
+public:
+  Poker(int);
+  PokerPlayer getUser();
+  bool isBroke(PokerPlayer);
+  bool isUser(PokerPlayer);
+  PokerPlayer getWinner();
+  vector<PokerPlayer> setPlayers(int);
+  stack<Card> getDeck();
+  void setBlind();
+  void printTable();
+  void printWinner(PokerPlayer);
+  void lay();
+  void deal();
+  float raise(PokerPlayer);
+  int getMove(PokerPlayer);
+  bool iscall();
+  void makeBet();
+  void call();
+  void reset();
+  void sortByRank(vector<Card>&);
+  vector<vector<Card>> sortHand(Player);
+  void setChance(); //set every player's chance
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace blackjack{
-  //PLAYER STRUCT
-  /****************************************************************************/
-  struct Player : public Person{
-    bool hit, stay;
-    Player(){}
-  };
+//PLAY
+/****************************************************************************/
+void play();
 
-  //BLACKJACK CLASS
-  /****************************************************************************/
+//PLAYER STRUCT
+/****************************************************************************/
+struct BlackjackPlayer : public Player{
+  bool hit, stay;
+  BlackjackPlayer(){}
+};
 
-}
+//BLACKJACK CLASS
+/****************************************************************************/

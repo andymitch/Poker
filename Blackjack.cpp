@@ -1,4 +1,4 @@
-#include <Casino.hpp>
+#include "Casino.hpp"
 #include <iostream>
 #include <vector>
 #include <stack>
@@ -8,16 +8,18 @@
 #include <chrono> //chrono::seconds
 #include <cstdlib>
 using namespace std;
-using namespace blackjack;
 
 
-//PLAY
-/******************************************************************************/
+namespace blackjack{
+  //PLAY
+  /******************************************************************************/
+  void playBlackjack(){}
+
+  //PLAYER DECLARATION
+  /******************************************************************************/
 
 
-//PLAYER DECLARATION
-/******************************************************************************/
+  //BLACKJACK DECLARATION
+  /******************************************************************************/
 
-
-//BLACKJACK DECLARATION
-/******************************************************************************/
+}

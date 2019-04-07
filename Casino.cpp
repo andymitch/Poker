@@ -1,4 +1,4 @@
-#include <Casino.hpp>
+#include "Casino.hpp"
 #include <iostream>
 #include <vector>
 #include <stack>
@@ -16,8 +16,8 @@ int main(){
   cout << "1. Poker\n2. Blackjack\n\n";
   cin >> x;
   switch(x){
-    case 1: poker::play();
-    case 2: blackjack::play();
+    case 1: playPoker();
+    case 2: playBlackjack();
     default: cout << "Invalid option." << endl;
   }
   return 0;
