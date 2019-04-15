@@ -50,7 +50,7 @@ PokerPlayer::PokerPlayer(int i){
 Poker::Poker(int i){
   deck = getDeck();
   bigBlind = littleBlind = pot = bet = 0;
-  players = setplayers(i);
+  players = setPlayers(i);
   USER = &players[0];
   setBlind();
   bet = bigBlind;
@@ -96,7 +96,7 @@ stack<Card> Poker::getDeck(){
   }
   return deck;
 }
-vector<PokerPlayer> Poker::setplayers(int n){
+vector<PokerPlayer> Poker::setPlayers(int n){
   vector<PokerPlayer> p;
   for(int i = 0; i <= n; i++) p.push_back(PokerPlayer(i));
   return p;

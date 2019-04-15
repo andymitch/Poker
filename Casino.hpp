@@ -82,15 +82,15 @@ struct Player{
 
 //PLAY
 /****************************************************************************/
-void play();
+void playPoker();
 
 //PLAYER STRUCT
 /****************************************************************************/
 struct PokerPlayer : public Player{
   int chance;
   bool call, fold, turn;
-  Player();
-  Player(int);
+  PokerPlayer();
+  PokerPlayer(int);
 };
 
 //POKER CLASS
@@ -121,7 +121,7 @@ public:
   void call();
   void reset();
   void sortByRank(vector<Card>&);
-  vector<vector<Card>> sortHand(Player);
+  vector<vector<Card>> sortHand(PokerPlayer);
   void setChance(); //set every player's chance
 };
 
@@ -131,7 +131,7 @@ public:
 
 //PLAY
 /****************************************************************************/
-void play();
+void playBlackjack();
 
 //PLAYER STRUCT
 /****************************************************************************/
