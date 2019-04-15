@@ -17,7 +17,7 @@ int main(){
   cin >> x;
   switch(x){
     case 1: playPoker();
-    case 2: playBlackjack();
+    case 2: //playBlackjack();
     default: cout << "Invalid option." << endl;
   }
   return 0;

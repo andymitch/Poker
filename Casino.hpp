@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CASINO_HPP
+#define CASINO_HPP
 #include <iostream>
 #include <vector>
 #include <stack>
@@ -13,7 +14,7 @@ using namespace std;
 //CARD STRUCT
 /******************************************************************************/
 enum Suit{club, diamond, heart, spade};
-enum Rank{Two,Three,Four,Five,Six,Seven,Eight,Nine,Ten,J,Q,K,A};
+enum Rank{Two,Three,Four,Five,Six,Seven,Eight,Nine,Ten,Jack,Queen,King,Ace};
 
 struct Card{
     Rank rank;
@@ -45,10 +46,10 @@ string Card::printRank(Rank rank){
         case Eight: return "8";
         case Nine: return "9";
         case Ten: return "T";
-        case J: return "J";
-        case Q: return "Q";
-        case K: return "K";
-        case A: return "A";
+        case Jack: return "J";
+        case Queen: return "Q";
+        case King: return "K";
+        case Ace: return "A";
         default: return "VOID";
     }
 }
@@ -120,8 +121,7 @@ public:
   void makeBet();
   void call();
   void reset();
-  void sortByRank(vector<Card>&);
-  vector<vector<Card>> sortHand(PokerPlayer);
+  vector<vector<Card>> sortHand(PokerPlayer&);
   void setChance(); //set every player's chance
 };
 
@@ -131,14 +131,16 @@ public:
 
 //PLAY
 /****************************************************************************/
-void playBlackjack();
+//void playBlackjack();
 
 //PLAYER STRUCT
 /****************************************************************************/
-struct BlackjackPlayer : public Player{
+/*struct BlackjackPlayer : public Player{
   bool hit, stay;
   BlackjackPlayer(){}
-};
+};*/
 
 //BLACKJACK CLASS
 /****************************************************************************/
+
+#endif

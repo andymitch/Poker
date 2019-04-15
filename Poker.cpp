@@ -34,6 +34,7 @@ void playPoker(){
 //PokerPlayer DECLARATION
 /******************************************************************************/
 PokerPlayer::PokerPlayer(){}
+
 PokerPlayer::PokerPlayer(int i){
   if(i == 0) name = "You";
   else if(i == 1) name = "Alex";
@@ -55,15 +56,19 @@ Poker::Poker(int i){
   setBlind();
   bet = bigBlind;
 }
+
 PokerPlayer Poker::getUser(){
   return *USER;
 }
+
 bool Poker::isBroke(PokerPlayer p){
   return (p.money < 1);
 }
+
 bool Poker::isUser(PokerPlayer p){
   return(USER == &p);
 }
+
 PokerPlayer Poker::getWinner(){
   vector<PokerPlayer> temp = players;
   vector<PokerPlayer>::iterator it, t;
@@ -76,6 +81,7 @@ PokerPlayer Poker::getWinner(){
   }
   return temp.back();
 }
+
 stack<Card> Poker::getDeck(){
   vector<Card> _deck;
   Rank rank = Two;
@@ -96,16 +102,19 @@ stack<Card> Poker::getDeck(){
   }
   return deck;
 }
+
 vector<PokerPlayer> Poker::setPlayers(int n){
   vector<PokerPlayer> p;
   for(int i = 0; i <= n; i++) p.push_back(PokerPlayer(i));
   return p;
 }
+
 void Poker::setBlind(){
   if(littleBlind == 0) littleBlind = .50;
   else littleBlind *= 2;
   bigBlind = littleBlind * 2;
 }
+
 void Poker::printTable(){
   //dimensions: 80X24
   this_thread::sleep_for(chrono::seconds(1));
@@ -134,6 +143,7 @@ void Poker::printTable(){
   for(int z = 0; z < 80; z++) cout << '*'; //bottom border
   cout << endl;
 }
+
 void Poker::printWinner(PokerPlayer PokerPlayer){
   cout << PokerPlayer.name << " won with a high ";
   if(PokerPlayer.chance <= 9000) cout << "royal flush." << endl;
@@ -147,11 +157,13 @@ void Poker::printWinner(PokerPlayer PokerPlayer){
   else if(PokerPlayer.chance <= 1000) cout << "pair." << endl;
   else cout << "card." << endl;
 }
+
 void Poker::lay(){
   dealer.push_back(deck.top());
   deck.pop();
   printTable();
 }
+
 void Poker::deal(){
   for(auto p : players){
     p.hand.push_back(deck.top());
@@ -159,6 +171,7 @@ void Poker::deal(){
     printTable();
   }
 }
+
 float Poker::raise(PokerPlayer p){
   if(isUser(p)){
     cout << "Current bet: $" << bet << endl;
@@ -189,6 +202,7 @@ float Poker::raise(PokerPlayer p){
     return raise;
   }
 }
+
 int Poker::getMove(PokerPlayer p){
   if(p.money < bet){
     if(isUser(p)) cout << "You don't have enough money to cover the bet; you must fold." << endl;
@@ -212,10 +226,12 @@ int Poker::getMove(PokerPlayer p){
     return ((r+c)/2);
   }
 }
+
 bool Poker::iscall(){
   for(auto p : players) if(!p.call) return false;
   return true;
 }
+
 void Poker::makeBet(){
   while(!iscall()){
     for(auto& p : players){
@@ -235,6 +251,7 @@ void Poker::makeBet(){
     }
   }
 }
+
 void Poker::call(){
   PokerPlayer winner = getWinner();
   winner.money += pot;
@@ -242,6 +259,7 @@ void Poker::call(){
   printTable();
   printWinner(winner);
 }
+
 void Poker::reset(){
   for(int i = 0; i < players.size(); i++){
     if(players[i].money < 1) players.erase(players.begin()+i);
@@ -263,22 +281,14 @@ vector<Card> join_vector(vector<Card> a, vector<Card> b){
   for(auto j : b) c.push_back(j);
   return c;
 }
+
 vector<vector<Card>> join_vectors(vector<vector<Card>> a, vector<vector<Card>> b){
   vector<vector<Card>> c;
   for(auto i : a) c.push_back(i);
   for(auto j : a) c.push_back(j);
   return c;
 }
-void sortByRank(vector<Card>& suit){
-  for(int i = 0; i < suit.size()-1; i++){
-    for(int j = suit.size()-1; j > i; j--){
-      if(suit[j].rank > suit[j-1].rank){
-        swap(suit[j-1], suit[j]);
-      }
-    }
-  }
-  reverse(suit.begin(), suit.end());
-}
+
 int highCard(vector<vector<Card>> a){
   Rank rank = Two;
   Suit suit = club;
@@ -311,6 +321,7 @@ bool aPair(vector<vector<Card>>& a){
   }
   return false;
 }
+
 bool twoPair(vector<vector<Card>>& a){
   //two pair: 2 pairs of 2 cards in the same rank
   vector<vector<Card>> b = a;
@@ -327,6 +338,7 @@ bool twoPair(vector<vector<Card>>& a){
   }
   return false;
 }
+
 bool threeKind(vector<vector<Card>>& a){
   //three of a kind: 3 cards of the same rank
   vector<Card> sameRank;
@@ -347,6 +359,7 @@ bool threeKind(vector<vector<Card>>& a){
   }
   return false;
 }
+
 bool straight(vector<vector<Card>>& a){
   //straight: 5 cards in sequence
   for(auto& c : a) reverse(c.begin(), c.end()); //reverse ranks to decreasing
@@ -376,6 +389,7 @@ bool straight(vector<vector<Card>>& a){
   }
   return false;
 }
+
 bool flush(vector<vector<Card>>& a){
   //flush: 5 cards in the same suit
   for(auto s : a) if(s.size() == 5){
@@ -386,6 +400,7 @@ bool flush(vector<vector<Card>>& a){
   }
   return false;
 }
+
 bool fullHouse(vector<vector<Card>>& a){
   //full house: 3 cards of the same rank with 2 cards of the same rank
   vector<vector<Card>> b = a, c = a; // c is safety vector
@@ -400,6 +415,7 @@ bool fullHouse(vector<vector<Card>>& a){
   }
   return false;
 }
+
 bool fourKind(vector<vector<Card>>& a){
   //four of a kind: 4 cards of the same rank
   vector<Card> sameRank;
@@ -420,6 +436,7 @@ bool fourKind(vector<vector<Card>>& a){
   }
   return false;
 }
+
 bool straightFlush(vector<vector<Card>>& a){
   //straight flush: 5 cards in sequence of the same suit
   for(auto suit : a){
@@ -443,6 +460,7 @@ bool straightFlush(vector<vector<Card>>& a){
   }
   return false;
 }
+
 bool royalFlush(vector<vector<Card>>& a){
   //royal flush: 5 royal cards in sequence (10-A) of the same suit
   for(auto suit : a){
@@ -456,18 +474,30 @@ bool royalFlush(vector<vector<Card>>& a){
   return false;
 }
 
-vector<vector<Card>> Poker::sortHand(PokerPlayer p){
+vector<vector<Card>> Poker::sortHand(PokerPlayer& p){
   vector<vector<Card>> sh(4);
   vector<Card> hand = join_vector(p.hand, dealer);
   int i = 0;
   for(Suit suit = club; suit <= spade; ++suit){
+    //sort hand by suit
     for(auto card : hand) if(card.suit == suit) sh[i].push_back(card);
     i++;
   }
-  for(auto s : sh) sortByRank(s);
+  for(auto suit : sh){
+    //sort suits by rank
+    for(int i = 0; i < suit.size()-1; i++){
+      for(int j = suit.size()-1; j > i; j--){
+        if(suit[j].rank > suit[j-1].rank){
+          swap(suit[j-1], suit[j]);
+        }
+      }
+    }
+    reverse(suit.begin(), suit.end());
+  }
   reverse(sh.begin(), sh.end());
   return sh;
 }
+
 void Poker::setChance(){
   int chance;
   for(auto& p : players){
