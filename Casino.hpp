@@ -1,5 +1,4 @@
-#ifndef CASINO_HPP
-#define CASINO_HPP
+#pragma once
 #include <iostream>
 #include <vector>
 #include <stack>
@@ -124,23 +123,3 @@ public:
   vector<vector<Card>> sortHand(PokerPlayer&);
   void setChance(); //set every player's chance
 };
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-//PLAY
-/****************************************************************************/
-//void playBlackjack();
-
-//PLAYER STRUCT
-/****************************************************************************/
-/*struct BlackjackPlayer : public Player{
-  bool hit, stay;
-  BlackjackPlayer(){}
-};*/
-
-//BLACKJACK CLASS
-/****************************************************************************/
-
-#endif
