@@ -13,7 +13,7 @@ using namespace std;
 //CARD STRUCT
 /******************************************************************************/
 enum Suit{club, diamond, heart, spade};
-enum Rank{Two,Three,Four,Five,Six,Seven,Eight,Nine,Ten,Jack,Queen,King,Ace};
+enum Rank{Two = 2, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace};
 
 struct Card{
     Rank rank;
@@ -44,7 +44,7 @@ string Card::printRank(Rank rank){
         case Seven: return "7";
         case Eight: return "8";
         case Nine: return "9";
-        case Ten: return "T";
+        case Ten: return "10";
         case Jack: return "J";
         case Queen: return "Q";
         case King: return "K";
@@ -70,56 +70,53 @@ string Card::printCard(){
 struct Player{
   string name;
   vector<Card> hand;
-  float money;
-  float makeBet(float bet){
-    money -= bet;
-    return bet;
+  float money, bid;
+  int chance;
+  bool call, fold, turn;
+  Player(){}
+  Player(int i){
+    if(i == 0) name = "You";
+    else if(i == 1) name = "Alex";
+    else if(i == 2) name = "Brian";
+    else if(i == 3) name = "Carl";
+    else if(i == 4) name = "Derrek";
+    else if(i == 5) name = "Earl";
+    money = 100; chance = 0; bid = 0;
+    call = fold = turn = false;
   }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-//PLAY
-/****************************************************************************/
-void playPoker();
-
-//PLAYER STRUCT
-/****************************************************************************/
-struct PokerPlayer : public Player{
-  int chance;
-  bool call, fold, turn;
-  PokerPlayer();
-  PokerPlayer(int);
-};
-
 //POKER CLASS
 /****************************************************************************/
 class Poker{
   stack<Card> deck;
   vector<Card> dealer;
-  vector<PokerPlayer> players;
+  vector<Player> players;
   float bigBlind, littleBlind, pot, bet;
-  PokerPlayer* USER;
+  int turn;
 public:
   Poker(int);
-  PokerPlayer getUser();
-  bool isBroke(PokerPlayer);
-  bool isUser(PokerPlayer);
-  PokerPlayer getWinner();
-  vector<PokerPlayer> setPlayers(int);
+  Player* user;
+  float min(){return bigBlind;}
+  bool isBroke(Player);
+  bool isUser(Player);
+  Player* getWinner();
+  vector<Player> setPlayers(int);
   stack<Card> getDeck();
   void setBlind();
-  void printTable();
-  void printWinner(PokerPlayer);
+  void printTable(bool);
+  void printWinner(Player*);
   void lay();
   void deal();
-  float raise(PokerPlayer);
-  int getMove(PokerPlayer);
+  float raise(Player*);
+  int getMove(Player*);
   bool iscall();
-  void makeBet();
+  void placeBets();
   void call();
   void reset();
-  vector<vector<Card>> sortHand(PokerPlayer&);
+  vector<vector<Card>> sortHand(Player&);
   void setChance(); //set every player's chance
 };

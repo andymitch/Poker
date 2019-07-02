@@ -1,92 +1,41 @@
-#include "Casino.hpp"
+#include "poker.hpp"
 #include <iostream>
 #include <vector>
 #include <stack>
 #include <iostream>
-#include <algorithm>
+#include <algorithm> //shuffle
 #include <thread> //this_thread::sleep_for
 #include <chrono> //chrono::seconds
 #include <cstdlib>
+#include <random> //random generator
 using namespace std;
 
-
-//PLAY
-/******************************************************************************/
-void playPoker(){
-  Poker p(5);
-  while(!p.isBroke(p.getUser())){ //user isn't broke
-    p.deal();
-    p.deal();
-    p.makeBet();
-    p.lay();
-    p.lay();
-    p.lay();
-    p.makeBet();
-    p.lay();
-    p.makeBet();
-    p.lay();
-    p.makeBet();
-    p.call();
-    p.reset(); //reset table, keep players
-  }
-}
-
-//PokerPlayer DECLARATION
-/******************************************************************************/
-PokerPlayer::PokerPlayer(){}
-
-PokerPlayer::PokerPlayer(int i){
-  if(i == 0) name = "You";
-  else if(i == 1) name = "Alex";
-  else if(i == 2) name = "Brian";
-  else if(i == 3) name = "Carl";
-  else if(i == 4) name = "Derrek";
-  else if(i == 5) name = "Mike";
-  money = 100;
-  call = fold = turn = false;
-}
 
 //POKER DECLARATION
 /******************************************************************************/
 Poker::Poker(int i){
   deck = getDeck();
   bigBlind = littleBlind = pot = bet = 0;
+  turn = 0;
   players = setPlayers(i);
-  USER = &players[0];
+  user = &players[0];
   setBlind();
   bet = bigBlind;
 }
 
-PokerPlayer Poker::getUser(){
-  return *USER;
-}
-
-bool Poker::isBroke(PokerPlayer p){
-  return (p.money < 1);
-}
-
-bool Poker::isUser(PokerPlayer p){
-  return(USER == &p);
-}
-
-PokerPlayer Poker::getWinner(){
-  vector<PokerPlayer> temp = players;
-  vector<PokerPlayer>::iterator it, t;
-  for(it = temp.begin(); it != temp.end()-1; it++){
-    if(it->chance > (it+1)->chance){
-      t = it;
-      it = (it+1);
-      (it+1) = t;
-    }
-  }
-  return temp.back();
+Player* Poker::getWinner(){
+  Player* winner;
+  int top = 0;
+  for(int i = 0; i < players.size(); i++) if(top < players[i].chance) {winner = &players[i]; top = players[i].chance;}
+  return winner;
 }
 
 stack<Card> Poker::getDeck(){
+  cout << "\nShuffling new deck..\n";
   vector<Card> _deck;
-  Rank rank = Two;
-  Suit suit = club;
-  for(int i = 0; i < 4; i++){
+  Rank rank = Two; //lowest rank
+  Suit suit = club; //lowest suit
+  for(int i = 0; i < 4; i++){ //get deck of cards sequentially
       for(int j = 0; j < 13; j++){
           _deck.push_back(Card(rank, suit));
           ++rank;
@@ -94,89 +43,78 @@ stack<Card> Poker::getDeck(){
       ++suit;
       rank = Two;
   }
-  random_shuffle(_deck.begin(), _deck.end());
+  shuffle(_deck.begin(), _deck.end(), default_random_engine(chrono::system_clock::now().time_since_epoch().count())); //shuffle deck
   stack<Card> deck;
-  while(!_deck.empty()){
+  while(!_deck.empty()){ //convert vector to stack
     deck.push(_deck.back());
     _deck.pop_back();
   }
   return deck;
 }
 
-vector<PokerPlayer> Poker::setPlayers(int n){
-  vector<PokerPlayer> p;
-  for(int i = 0; i <= n; i++) p.push_back(PokerPlayer(i));
+vector<Player> Poker::setPlayers(int n){
+  vector<Player> p;
+  for(int i = 0; i <= n; i++) p.push_back(Player(i));
   return p;
 }
 
 void Poker::setBlind(){
-  if(littleBlind == 0) littleBlind = .50;
-  else littleBlind *= 2;
+  littleBlind += 1;
   bigBlind = littleBlind * 2;
 }
 
-void Poker::printTable(){
-  //dimensions: 80X24
+void Poker::printTable(bool show){
   this_thread::sleep_for(chrono::seconds(1));
-  cout << "\033[2J\033[1;1H"; //clear screen sorta
+  cout << "\033[2J\033[1;1H"; //clear screen
   for(int x = 0; x < 80; x++) cout << '*'; //top border
   cout << "\n\n";
-  PokerPlayer you;
-  for(auto p : players){
+  for(auto& p : players){
     if(p.turn) cout << " *";
     cout << "\t" << p.name << "\t$" << p.money << "\t";
-    for(auto c : p.hand) cout << c;
+    if(show || &p == user) for(auto c : p.hand) cout << c;
     cout << endl;
-    if(p.name == "You") you = p;
   }
-  int space = 5 - players.size(); //buffer space
-  cout << "\n\n\n\t\tYour hand: ";
-  for(auto card : you.hand) cout << card;
-  cout << endl;
-  cout << "\t\t   Dealer: ";
-  for(auto d : dealer) cout << d;
-  cout << "\n\n\t\tYour chance of winning: " << you.chance << "%\n\n\n";
-  cout << "\t\tPot: $" << pot << endl;
-  cout << "\t\tLittle Blind: $" << littleBlind << endl;
-  cout << "\t\tBig Blind: $" << bigBlind << endl;
-  for(int y = 0; y < space+2; y++) cout << endl; //remaining space
+  cout << "\n\t\t   Dealer: "; for(auto d : dealer) cout << d;
+  cout << "\t\tPot: $" << pot << "\tBet: $" << bet << endl;
+  for(int y = players.size(); y < 9; y++) cout << endl; //remaining space
   for(int z = 0; z < 80; z++) cout << '*'; //bottom border
   cout << endl;
 }
 
-void Poker::printWinner(PokerPlayer PokerPlayer){
-  cout << PokerPlayer.name << " won with a high ";
-  if(PokerPlayer.chance <= 9000) cout << "royal flush." << endl;
-  else if(PokerPlayer.chance <= 8000) cout << "straight flush." << endl;
-  else if(PokerPlayer.chance <= 7000) cout << "four of a kind." << endl;
-  else if(PokerPlayer.chance <= 6000) cout << "full house." << endl;
-  else if(PokerPlayer.chance <= 5000) cout << "flush." << endl;
-  else if(PokerPlayer.chance <= 4000) cout << "straight." << endl;
-  else if(PokerPlayer.chance <= 3000) cout << "three of a kind." << endl;
-  else if(PokerPlayer.chance <= 2000) cout << "two pair." << endl;
-  else if(PokerPlayer.chance <= 1000) cout << "pair." << endl;
+void Poker::printWinner(Player* winner){
+  cout << winner->name << " won with a high ";
+  if(winner->chance <= 9000) cout << "royal flush." << endl;
+  else if(winner->chance <= 8000) cout << "straight flush." << endl;
+  else if(winner->chance <= 7000) cout << "four of a kind." << endl;
+  else if(winner->chance <= 6000) cout << "full house." << endl;
+  else if(winner->chance <= 5000) cout << "flush." << endl;
+  else if(winner->chance <= 4000) cout << "straight." << endl;
+  else if(winner->chance <= 3000) cout << "three of a kind." << endl;
+  else if(winner->chance <= 2000) cout << "two pair." << endl;
+  else if(winner->chance <= 1000) cout << "pair." << endl;
   else cout << "card." << endl;
+  char yn; cout << "Again? (y/n): "; cin >> yn; cout << endl;
 }
 
 void Poker::lay(){
   dealer.push_back(deck.top());
   deck.pop();
-  printTable();
+  printTable(false);
 }
 
 void Poker::deal(){
-  for(auto p : players){
+  for(auto& p : players){
     p.hand.push_back(deck.top());
     deck.pop();
-    printTable();
   }
+  printTable(false);
 }
 
-float Poker::raise(PokerPlayer p){
-  if(isUser(p)){
+float Poker::raise(Player* p){
+  float raise;
+  if(p == user){ //user choice
     cout << "Current bet: $" << bet << endl;
     cout << "How much do you want to raise the bet to?: $";
-    float raise;
     cin >> raise;
     cout << endl;
     while(true){
@@ -184,67 +122,72 @@ float Poker::raise(PokerPlayer p){
         cout << "It has to be more than the current bet: $";
         cin >> raise;
         cout << endl;
-      }else if(raise > p.money){
+      }else if(raise > p->money){
         cout << "You don't have enough money to cover that bet: $";
         cin >> raise;
         cout << endl;
       }else{
-        bet = p.makeBet(raise);
+        if(raise == p->money) cout << p->name << " go all in!";
         return raise;
       }
     }
-  }else{
-    float raise;
-    float r = rand()%15-10;
-    raise = (p.money*p.chance/100)+r;
-    if(raise > p.money) raise = p.money;
-    bet = p.makeBet(raise);
+  }else{ //bot choice
+    float r = rand()%15 - 10;
+    raise = (p->money * p->chance / 200) + r;
+    if(raise <= 0) raise *= -1;
+    raise += bet;
+    if(raise > p->money){
+      raise = p->money;
+      cout << p->name << " goes all in!";
+    }
     return raise;
   }
 }
 
-int Poker::getMove(PokerPlayer p){
-  if(p.money < bet){
-    if(isUser(p)) cout << "You don't have enough money to cover the bet; you must fold." << endl;
+int Poker::getMove(Player* p){
+  if(p->money < bet){
+    if(p == user) cout << "You don't have enough money to cover the bet, you must fold." << endl;
     return 3;
   }
   setChance();
-  if(isUser(p)){ //user choice
+  if(p == user){ //user choice
     cout << "What's your move?:" << endl;
     cout << "\t1. raise" << endl;
     cout << "\t2. check" << endl;
     cout << "\t3. fold" << endl;
     int x = 0;
-    while(x < 1 && x > 3) cin >> x;
+    while(x < 1 || x > 3){
+      cin >> x;
+      if(x == 3 && p->money == bet){
+        if(p == user) cout << "You don't have enough money to raise, you must check." << endl;
+        return 2;
+      }
+    }
     return x;
   }else{ //bot choice
-    int r = rand() % 3 + 1;
-    int c;
-    if(p.chance >= 50) c = 1;
-    else if(p.chance >= 20) c = 2;
-    else c = 3;
-    return ((r+c)/2);
+    int c, r = rand()%3 + 1;
+    if(p->chance >= 50) c = 2;
+    else if(p->chance >= 20) c = 4;
+    else c = 6;
+    return ((r+c)/3); //2:1 chance:random
   }
 }
 
 bool Poker::iscall(){
-  for(auto p : players) if(!p.call) return false;
+  for(auto& p : players) if(!p.call) return false;
   return true;
 }
 
-void Poker::makeBet(){
+void Poker::placeBets(){
   while(!iscall()){
     for(auto& p : players){
       if(!p.fold){
         p.turn = true;
-        printTable();
-        int x = getMove(p);
-        switch(x){
-          case 1: pot += p.makeBet(raise(p)); //raise
-          case 2: pot += p.makeBet(bet); //check
-            p.call = true;
-          case 3: p.fold = true; //fold
-            p.call = true;
+        printTable(false);
+        switch(getMove(&p)){
+          case 1: bet = raise(&p); p.money -= (bet-p.bid); pot += (bet-p.bid); p.bid = bet; break; //raise
+          case 2: p.money -= (bet-p.bid); pot += (bet-p.bid); p.bid = bet; p.call = true; break; //check
+          case 3: p.fold = true; p.call = true; break; //fold
         }
         p.turn = false;
       }
@@ -253,10 +196,10 @@ void Poker::makeBet(){
 }
 
 void Poker::call(){
-  PokerPlayer winner = getWinner();
-  winner.money += pot;
+  Player* winner = getWinner();
+  winner->money += pot;
   pot = 0;
-  printTable();
+  printTable(true);
   printWinner(winner);
 }
 
@@ -271,6 +214,7 @@ void Poker::reset(){
   while(!deck.empty()) deck.pop();
   dealer.clear();
   bigBlind = littleBlind = bet = 0;
+  deck = getDeck();
 }
 
 //POKER::GETCHANCE FUNCTION
@@ -440,21 +384,23 @@ bool fourKind(vector<vector<Card>>& a){
 bool straightFlush(vector<vector<Card>>& a){
   //straight flush: 5 cards in sequence of the same suit
   for(auto suit : a){
-    reverse(suit.begin(), suit.end());
-    Rank rank = suit[0].rank;
-    vector<Card> winSuit;
-    winSuit.push_back(suit[0]);
-    for(auto card : suit){
-      if(card.rank != --rank){
-        rank = card.rank;
-        winSuit.clear();
-      }
-      winSuit.push_back(card);
-      if(winSuit.size() == 5){
-        vector<vector<Card>> temp;
-        temp.push_back(suit);
-        a = temp;
-        return true;
+    if(!suit.empty()){
+      reverse(suit.begin(), suit.end());
+      Rank rank = suit[0].rank;
+      vector<Card> winSuit;
+      winSuit.push_back(suit[0]);
+      for(auto card : suit){
+        if(card.rank != --rank){
+          rank = card.rank;
+          winSuit.clear();
+        }
+        winSuit.push_back(card);
+        if(winSuit.size() == 5){
+          vector<vector<Card>> temp;
+          temp.push_back(suit);
+          a = temp;
+          return true;
+        }
       }
     }
   }
@@ -464,7 +410,8 @@ bool straightFlush(vector<vector<Card>>& a){
 bool royalFlush(vector<vector<Card>>& a){
   //royal flush: 5 royal cards in sequence (10-A) of the same suit
   for(auto suit : a){
-    if(suit[0].rank == 10 && suit.size() == 5){
+    if(suit.empty());
+    else if(suit[0].rank == 10 && suit.size() == 5){
       vector<vector<Card>> temp;
       temp.push_back(suit);
       a = temp;
@@ -474,25 +421,28 @@ bool royalFlush(vector<vector<Card>>& a){
   return false;
 }
 
-vector<vector<Card>> Poker::sortHand(PokerPlayer& p){
+vector<vector<Card>> Poker::sortHand(Player& p){
   vector<vector<Card>> sh(4);
   vector<Card> hand = join_vector(p.hand, dealer);
-  int i = 0;
+  int x = 0;
   for(Suit suit = club; suit <= spade; ++suit){
     //sort hand by suit
-    for(auto card : hand) if(card.suit == suit) sh[i].push_back(card);
-    i++;
+    for(auto card : hand) if(card.suit == suit) sh[x].push_back(card);
+    x++;
   }
-  for(auto suit : sh){
+  int i, j, k;
+  for(i = 0; i < 4; i++){
     //sort suits by rank
-    for(int i = 0; i < suit.size()-1; i++){
-      for(int j = suit.size()-1; j > i; j--){
-        if(suit[j].rank > suit[j-1].rank){
-          swap(suit[j-1], suit[j]);
+    if(sh[i].size() > 1){
+      for(j = 0; j < sh[i].size(); j++){
+        for(k = sh[i].size()-1; k > j; k--){
+          if(sh[i][k].rank > sh[i][k-1].rank){
+            swap(sh[i][k-1], sh[i][j]);
+          }
         }
       }
+      reverse(sh[i].begin(), sh[i].end());
     }
-    reverse(suit.begin(), suit.end());
   }
   reverse(sh.begin(), sh.end());
   return sh;
@@ -501,7 +451,6 @@ vector<vector<Card>> Poker::sortHand(PokerPlayer& p){
 void Poker::setChance(){
   int chance;
   for(auto& p : players){
-    p.chance = 0; //reset chance
     vector<vector<Card>> hand = sortHand(p); //get a sorted 2D vector hand
     if(royalFlush(hand)) chance = 9000 + highCard(hand);
     else if(straightFlush(hand)) chance = 8000 + highCard(hand);
@@ -514,5 +463,30 @@ void Poker::setChance(){
     else if(aPair(hand)) chance = 1000 + highCard(hand);
     else chance = highCard(hand);
     p.chance = chance*100/9134;
+    cout << p.name << " " << p.chance << endl;
   }
+}
+
+//MAIN
+/*****************************************************************************/
+
+int main(){
+  Poker p(5);
+  while(p.user->money >= p.min()){ //user isn't broke
+    p.deal();
+    p.deal();
+    p.printTable(true);
+    p.placeBets();
+    p.lay();
+    p.lay();
+    p.lay();
+    p.placeBets();
+    p.lay();
+    p.placeBets();
+    p.lay();
+    p.placeBets();
+    p.call();
+    p.reset(); //reset table, keep players
+  }
+  return 0;
 }
