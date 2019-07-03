@@ -70,7 +70,7 @@ string Card::printCard(){
 struct Player{
   string name;
   vector<Card> hand;
-  float money, bid;
+  float money, bid, allIn;
   int chance;
   bool call, fold, turn;
   Player(){}
@@ -81,7 +81,7 @@ struct Player{
     else if(i == 3) name = "Carl";
     else if(i == 4) name = "Derrek";
     else if(i == 5) name = "Earl";
-    money = 100; chance = 0; bid = 0;
+    money = 100; chance = 0; bid = 0; allIn = 0;
     call = fold = turn = false;
   }
 };
@@ -100,23 +100,24 @@ class Poker{
 public:
   Poker(int);
   Player* user;
-  float min(){return bigBlind;}
+  float min(){return littleBlind;}
+  void gameOver();
   bool isBroke(Player);
   bool isUser(Player);
-  Player* getWinner();
+  vector<Player*> getWinners();
   vector<Player> setPlayers(int);
   stack<Card> getDeck();
   void setBlind();
   void printTable(bool);
-  void printWinner(Player*);
+  void printWinners(vector<Player*>);
   void lay();
   void deal();
   float raise(Player*);
   int getMove(Player*);
   bool iscall();
-  void placeBets();
+  void placeBets(int,bool);
   void call();
-  void reset();
+  bool reset(float);
   vector<vector<Card>> sortHand(Player&);
   void setChance(); //set every player's chance
 };
