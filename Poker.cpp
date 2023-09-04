@@ -2,7 +2,6 @@
 #include <iostream>
 #include <vector>
 #include <stack>
-#include <iostream>
 #include <algorithm> //shuffle
 #include <thread> //this_thread::sleep_for
 #include <chrono> //chrono::seconds
